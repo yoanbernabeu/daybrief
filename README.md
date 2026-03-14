@@ -109,7 +109,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: yoanbernabeu/daybrief@v1
+      - uses: yoanbernabeu/daybrief@v0.1.0
         with:
           config: config.yaml
         env:
