@@ -1,6 +1,6 @@
 # DayBrief
 
-An open-source Go CLI tool that aggregates content from RSS feeds, YouTube channels, and podcasts, uses the Gemini API to summarize and analyze each source, and sends an automated HTML newsletter by email.
+An open-source GitHub Action that aggregates content from RSS feeds, YouTube channels, and podcasts, uses the Gemini API to summarize and analyze each source, and sends an automated HTML newsletter by email.
 
 ## Features
 
@@ -8,28 +8,17 @@ An open-source Go CLI tool that aggregates content from RSS feeds, YouTube chann
 - **AI-powered analysis**: Two-pass Gemini integration (summarize each source, then synthesize a newsletter)
 - **Automated delivery**: HTML email via SMTP
 - **Incremental updates**: Only processes new content since last execution
-- **CI/CD ready**: Designed to run in GitHub Actions via cron
+- **Zero infrastructure**: Runs entirely in GitHub Actions, no server needed
 
-## Installation
+## Quick Start
 
-Download the latest binary from [GitHub Releases](https://github.com/yoanbernabeu/daybrief/releases):
+### 1. Create a new repository
 
-```bash
-curl -sL https://github.com/yoanbernabeu/daybrief/releases/latest/download/daybrief-linux-amd64 -o daybrief
-chmod +x daybrief
-```
+Create a GitHub repository for your newsletter. This repo will hold your configuration and newsletter history.
 
-Or build from source:
+### 2. Add `config.yaml`
 
-```bash
-git clone https://github.com/yoanbernabeu/daybrief.git
-cd daybrief
-make build
-```
-
-## Configuration
-
-### `config.yaml`
+Create a `config.yaml` at the root of your repository to define your sources and newsletter preferences:
 
 ```yaml
 gemini:
@@ -55,45 +44,34 @@ sources:
       name: "My Podcast"
 ```
 
-### Environment Variables
+| Option | Description |
+|---|---|
+| `gemini.model` | Gemini model to use (default: `gemini-3-pro`) |
+| `newsletter.language` | Newsletter language (default: `en`) |
+| `newsletter.max_highlights` | Number of highlights in the newsletter (default: `5`) |
+| `newsletter.default_lookback` | Time window for first run (default: `48h`) |
+| `newsletter.editorial_prompt` | Tone and style instructions for the AI |
+| `mail.subject_prefix` | Prefix added to email subjects |
 
-Create a `.env` file (see `.env.example`):
+### 3. Configure secrets
 
-```env
-GEMINI_API_KEY=your-api-key
-YOUTUBE_API_KEY=your-youtube-api-key
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USERNAME=user
-SMTP_PASSWORD=pass
-MAIL_FROM_NAME=DayBrief
-MAIL_FROM_EMAIL=newsletter@example.com
-DAYBRIEF_RECIPIENTS=user1@example.com,user2@example.com
-```
+In your repository, go to **Settings > Secrets and variables > Actions** and add:
 
-## Usage
+| Secret | Required | Description |
+|---|---|---|
+| `GEMINI_API_KEY` | Yes | [Google Gemini API key](https://ai.google.dev/) |
+| `YOUTUBE_API_KEY` | If using YouTube sources | [YouTube Data API key](https://console.cloud.google.com/) |
+| `SMTP_HOST` | Yes | SMTP server host (e.g. `smtp.gmail.com`) |
+| `SMTP_PORT` | No | SMTP port (default: `587`) |
+| `SMTP_USERNAME` | Yes | SMTP username |
+| `SMTP_PASSWORD` | Yes | SMTP password |
+| `MAIL_FROM_NAME` | No | Sender name (default: `DayBrief`) |
+| `MAIL_FROM_EMAIL` | Yes | Sender email address |
+| `DAYBRIEF_RECIPIENTS` | Yes | Comma-separated list of recipient emails |
 
-### Run the full pipeline
+### 4. Add the workflow
 
-```bash
-daybrief run --config config.yaml
-```
-
-### Preview in browser
-
-```bash
-daybrief preview --config config.yaml
-```
-
-### Check source health
-
-```bash
-daybrief sources --config config.yaml
-```
-
-## GitHub Actions
-
-DayBrief is available as a GitHub Action. Add a workflow to your repository:
+Create `.github/workflows/daybrief.yml` in your repository:
 
 ```yaml
 name: DayBrief Newsletter
@@ -124,7 +102,42 @@ jobs:
           DAYBRIEF_RECIPIENTS: ${{ secrets.DAYBRIEF_RECIPIENTS }}
 ```
 
-Configure the required secrets in your repository settings under **Settings > Secrets and variables > Actions**.
+Adjust the cron schedule to your needs. The workflow can also be triggered manually via `workflow_dispatch`.
+
+### 5. Run it
+
+Go to the **Actions** tab in your repository, select "DayBrief Newsletter", and click **Run workflow** to test it. Once confirmed, the cron schedule will take care of the rest.
+
+The action automatically commits newsletter output files to `output/` in your repository, which are used to track what content has already been processed (incremental updates).
+
+## CLI Usage
+
+DayBrief can also be used as a standalone CLI tool.
+
+Download the binary from [GitHub Releases](https://github.com/yoanbernabeu/daybrief/releases):
+
+```bash
+curl -sL https://github.com/yoanbernabeu/daybrief/releases/latest/download/daybrief-linux-amd64 -o daybrief
+chmod +x daybrief
+```
+
+Or build from source:
+
+```bash
+git clone https://github.com/yoanbernabeu/daybrief.git
+cd daybrief
+make build
+```
+
+Available commands:
+
+```bash
+daybrief run --config config.yaml       # Run the full newsletter pipeline
+daybrief preview --config config.yaml   # Generate and preview in browser
+daybrief sources --config config.yaml   # Check source accessibility
+```
+
+When running locally, create a `.env` file with the same variables as the GitHub secrets (see `.env.example`).
 
 ## License
 
