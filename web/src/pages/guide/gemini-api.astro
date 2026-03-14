@@ -1,0 +1,91 @@
+---
+import '../../styles/global.css';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="Get a Gemini API Key — DayBrief Guide">
+  <div class="max-w-3xl mx-auto px-4 md:px-6 py-16 md:py-24">
+
+    <div class="mb-12">
+      <a href={`${base}/guide/`} class="text-sm text-db-blue hover:underline mb-4 inline-block">&larr; Back to setup guide</a>
+      <h1 class="text-3xl md:text-4xl font-extrabold text-db-text tracking-tight mb-4">Get a Gemini API Key</h1>
+      <p class="text-db-text-secondary text-lg">Create a Google AI Studio account and get your API key in under 2 minutes.</p>
+    </div>
+
+    <!-- Prerequisites -->
+    <section class="mb-12">
+      <div class="bg-db-card border border-db-border rounded-2xl p-6">
+        <h2 class="text-sm font-bold text-db-text mb-3 flex items-center gap-2">
+          <svg class="w-4 h-4 text-db-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Prerequisites
+        </h2>
+        <ul class="text-sm text-db-text-secondary space-y-1.5">
+          <li>A Google account (any Gmail or Google Workspace account)</li>
+          <li>A billing account may be required depending on your region</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Steps -->
+    <section class="mb-12 space-y-10">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-8 h-8 rounded-lg bg-db-blue text-white text-sm font-bold flex items-center justify-center">1</span>
+          <h2 class="text-xl font-extrabold text-db-text">Go to Google AI Studio</h2>
+        </div>
+        <div class="pl-11 text-db-text-secondary leading-relaxed space-y-3">
+          <p>Open <a href="https://aistudio.google.com" target="_blank" rel="noopener noreferrer" class="text-db-blue hover:underline font-medium">aistudio.google.com</a> and sign in with your Google account.</p>
+          <p>If it's your first visit, accept the Terms of Service. Google will automatically create a Cloud project for you.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-8 h-8 rounded-lg bg-db-blue text-white text-sm font-bold flex items-center justify-center">2</span>
+          <h2 class="text-xl font-extrabold text-db-text">Create an API key</h2>
+        </div>
+        <div class="pl-11 text-db-text-secondary leading-relaxed space-y-3">
+          <p>In the left sidebar, click <strong class="text-db-text">"Get API key"</strong> (key icon).</p>
+          <p>Click <strong class="text-db-text">"Create API key"</strong>, then choose <strong class="text-db-text">"Create a key in a new project"</strong>.</p>
+          <p>Your API key will be displayed. Copy it immediately — you won't be able to see the full key again.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-8 h-8 rounded-lg bg-db-blue text-white text-sm font-bold flex items-center justify-center">3</span>
+          <h2 class="text-xl font-extrabold text-db-text">Add it to your GitHub Secrets</h2>
+        </div>
+        <div class="pl-11 text-db-text-secondary leading-relaxed space-y-3">
+          <p>In your newsletter repository, go to <strong class="text-db-text">Settings &rarr; Secrets and variables &rarr; Actions</strong>.</p>
+          <p>Create a new secret named <code class="bg-db-surface px-1.5 py-0.5 rounded border border-db-border text-sm text-db-text">GEMINI_API_KEY</code> and paste your key.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rate limits -->
+    <section class="mb-12">
+      <h2 class="text-xl font-extrabold text-db-text mb-4">Rate limits</h2>
+      <p class="text-db-text-secondary text-sm mb-4">Rate limits depend on your account, region, and quota tier. Check the official documentation for current limits.</p>
+      <a href="https://ai.google.dev/gemini-api/docs/rate-limits?hl=fr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-db-card border border-db-border rounded-xl px-5 py-3 text-sm font-semibold text-db-text hover:border-db-blue/30 transition-colors">
+        <svg class="w-4 h-4 text-db-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        View rate limits documentation
+      </a>
+    </section>
+
+    <!-- Pricing -->
+    <section class="mb-12">
+      <h2 class="text-xl font-extrabold text-db-text mb-4">Pricing</h2>
+      <p class="text-db-text-secondary text-sm mb-4">Gemini API is pay-as-you-go. Check the <a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener noreferrer" class="text-db-blue hover:underline">pricing page</a> for current rates. Flash models are very affordable for newsletter generation.</p>
+    </section>
+
+    <!-- Note -->
+    <div class="bg-db-surface border border-db-border rounded-xl p-5">
+      <p class="text-sm text-db-text-secondary leading-relaxed">
+        <strong class="text-db-text">Tip:</strong> DayBrief's default model is <code class="bg-db-card px-1.5 py-0.5 rounded border border-db-border text-xs text-db-text">gemini-3-flash-preview</code>. A typical newsletter run uses 15-30 API requests (one per source + one for synthesis). Flash models keep costs minimal.
+      </p>
+    </div>
+
+  </div>
+</BaseLayout>

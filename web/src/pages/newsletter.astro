@@ -1,0 +1,407 @@
+---
+import '../styles/global.css';
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AI-curated newsletter powered by DayBrief" />
+    <meta property="og:title" content="DayBrief Newsletter" />
+    <meta property="og:description" content="AI-curated insights from RSS, YouTube & Podcasts" />
+    <meta property="og:type" content="article" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
+    <title>Newsletter — DayBrief</title>
+    <style>
+      .font-editorial { font-family: "Newsreader", Georgia, serif; }
+    </style>
+  </head>
+  <body class="bg-db-dark text-db-text" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">
+
+    <!-- Minimal top bar -->
+    <header class="sticky top-0 z-20 border-b border-db-border bg-db-dark/90 backdrop-blur-xl">
+      <div class="max-w-3xl mx-auto px-4 md:px-6 h-12 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 text-sm min-w-0">
+          <a href={base} class="flex items-center gap-1.5 text-db-text-secondary hover:text-db-text transition-colors font-semibold shrink-0">
+            <div class="w-5 h-5 rounded bg-db-blue flex items-center justify-center">
+              <span class="text-white text-[10px] font-extrabold">D</span>
+            </div>
+            <span class="hidden sm:inline">DayBrief</span>
+          </a>
+          <span class="text-db-text-muted">/</span>
+          <span id="header-repo" class="text-db-text-secondary font-medium truncate text-xs sm:text-sm"></span>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <div id="nl-schedule" class="hidden text-[11px] text-db-text-muted items-center gap-1 mr-1 sm:flex">
+            <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span id="nl-cron-text" class="hidden sm:inline"></span>
+          </div>
+          <div id="edition-nav" class="hidden flex items-center">
+            <button id="edition-prev" class="p-1.5 rounded-lg text-db-text-muted hover:text-db-text hover:bg-white/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed" aria-label="Previous edition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <span id="edition-label" class="text-[11px] sm:text-xs font-medium text-db-text-secondary min-w-[4.5rem] sm:min-w-[5rem] text-center tabular-nums"></span>
+            <button id="edition-next" class="p-1.5 rounded-lg text-db-text-muted hover:text-db-text hover:bg-white/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed" aria-label="Next edition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Loading -->
+      <div id="nl-loading" class="text-center py-32">
+        <div class="inline-flex items-center gap-3 text-db-text-secondary">
+          <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          Loading newsletter...
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div id="nl-error" class="hidden max-w-xl mx-auto px-6 pt-20">
+        <div class="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-4"></div>
+      </div>
+
+      <!-- Empty -->
+      <div id="nl-empty" class="hidden text-center py-32 px-6">
+        <div class="w-12 h-12 rounded-2xl bg-db-card border border-db-border flex items-center justify-center mx-auto mb-4">
+          <svg class="w-6 h-6 text-db-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+        </div>
+        <p class="text-db-text-secondary text-lg font-semibold">No newsletters yet</p>
+        <p class="text-db-text-muted text-sm mt-1 max-w-xs mx-auto">This repository doesn't have any newsletter editions in its <code class="bg-db-card px-1.5 py-0.5 rounded border border-db-border text-xs">output/</code> directory.</p>
+      </div>
+
+      <!-- ===== NEWSLETTER CONTENT ===== -->
+      <div id="nl-content" class="hidden">
+
+        <!-- Hero header -->
+        <div class="relative overflow-hidden">
+          <div class="absolute top-[-150px] left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full bg-db-blue/[0.05] blur-[120px] pointer-events-none"></div>
+          <div class="relative max-w-3xl mx-auto px-4 md:px-6 pt-10 pb-8 md:pt-24 md:pb-16 text-center">
+            <p id="nl-date" class="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.2em] text-db-blue mb-4 md:mb-5"></p>
+            <h1 id="nl-subject" class="font-editorial text-2xl md:text-[2.75rem] leading-[1.2] font-semibold text-db-text mb-3 md:mb-4 max-w-2xl mx-auto"></h1>
+            <p id="nl-repo" class="text-xs md:text-sm text-db-text-muted"></p>
+          </div>
+        </div>
+
+        <!-- Editorial -->
+        <section class="max-w-2xl mx-auto px-4 md:px-6 pb-10 md:pb-20">
+          <div class="flex items-center gap-3 mb-5 md:mb-8">
+            <div class="w-6 md:w-8 h-px bg-db-blue"></div>
+            <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] text-db-blue">Editorial</span>
+          </div>
+          <div id="nl-editorial" class="font-editorial text-base md:text-lg text-db-text-secondary leading-[1.75] md:leading-[1.85] space-y-4 md:space-y-6"></div>
+        </section>
+
+        <!-- Divider -->
+        <div class="max-w-3xl mx-auto px-4 md:px-6">
+          <div class="border-t border-db-border"></div>
+        </div>
+
+        <!-- Highlights -->
+        <section class="max-w-3xl mx-auto px-4 md:px-6 py-10 md:py-20">
+          <div class="flex items-center gap-3 mb-6 md:mb-10">
+            <div class="w-6 md:w-8 h-px bg-db-blue"></div>
+            <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] text-db-blue">Highlights</span>
+          </div>
+          <div id="nl-highlights" class="space-y-4 md:space-y-6"></div>
+        </section>
+
+        <!-- Resources -->
+        <div id="nl-resources-section" class="hidden">
+          <div class="max-w-3xl mx-auto px-4 md:px-6">
+            <div class="border-t border-db-border"></div>
+          </div>
+          <section class="max-w-3xl mx-auto px-4 md:px-6 py-10 md:py-20">
+            <div class="flex items-center gap-3 mb-6 md:mb-10">
+              <div class="w-6 md:w-8 h-px bg-db-blue"></div>
+              <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] text-db-blue">Further Reading</span>
+            </div>
+            <div id="nl-resources" class="grid gap-3 md:gap-4 sm:grid-cols-2"></div>
+          </section>
+        </div>
+
+        <!-- CTA footer -->
+        <div class="border-t border-db-border">
+          <div class="max-w-3xl mx-auto px-4 md:px-6 py-10 md:py-20">
+            <div class="bg-gradient-to-b from-db-card to-db-surface border border-db-border rounded-2xl p-6 md:p-12 text-center relative overflow-hidden">
+              <div class="absolute top-[-80px] left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-db-blue/[0.06] blur-[80px] pointer-events-none"></div>
+              <div class="relative">
+                <div class="w-10 h-10 rounded-xl bg-db-blue flex items-center justify-center mx-auto mb-4 md:mb-5">
+                  <span class="text-white text-sm font-extrabold">D</span>
+                </div>
+                <h3 class="text-lg md:text-2xl font-extrabold text-db-text mb-2 md:mb-3">
+                  Want your own AI newsletter?
+                </h3>
+                <p class="text-db-text-secondary text-sm leading-relaxed max-w-md mx-auto mb-6 md:mb-8">
+                  DayBrief is open source. Aggregate your sources, let Gemini AI summarize them, and get a newsletter like this one — fully automated.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-3">
+                  <a
+                    href="https://github.com/yoanbernabeu/daybrief"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center gap-2 bg-db-blue text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-blue-500 hover:shadow-[0_0_24px_rgba(59,130,246,0.25)]"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Create yours
+                  </a>
+                  <a
+                    href={`${base}/guide/`}
+                    class="inline-flex items-center justify-center gap-2 text-db-text border border-db-border px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-white/5 hover:border-white/20"
+                  >
+                    Setup guide
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Micro footer -->
+        <div class="border-t border-db-border py-5 md:py-6">
+          <div class="max-w-3xl mx-auto px-4 md:px-6 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px] text-db-text-muted">
+            <span>Generated by <a href="https://github.com/yoanbernabeu/daybrief" target="_blank" rel="noopener noreferrer" class="text-db-text-secondary hover:text-db-blue transition-colors">DayBrief</a></span>
+            <span>AI-powered open source newsletter</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script define:vars={{ base }}>
+      const params = new URLSearchParams(window.location.search);
+      const owner = params.get('owner');
+      const repo = params.get('repo');
+
+      let editions = [];
+      let currentIndex = 0;
+
+      if (!owner || !repo) {
+        hide('nl-loading');
+        showError('Missing owner or repo parameter. Use ?owner=xxx&repo=yyy');
+      } else {
+        document.getElementById('header-repo').textContent = owner + '/' + repo;
+        loadNewsletters();
+      }
+
+      async function loadNewsletters() {
+        try {
+          const listResp = await cachedFetch(`https://api.github.com/repos/${owner}/${repo}/contents/output`);
+          if (!listResp.ok) {
+            if (listResp.status === 404) { hide('nl-loading'); show('nl-empty'); return; }
+            if (listResp.status === 403) {
+              const r = listResp.headers.get('X-RateLimit-Remaining');
+              if (r === '0') { const t = listResp.headers.get('X-RateLimit-Reset'); showError(`Rate limit reached. Try again after ${new Date(parseInt(t)*1000).toLocaleTimeString()}.`); hide('nl-loading'); return; }
+            }
+            throw new Error(`Failed to load (${listResp.status})`);
+          }
+          const files = await listResp.json();
+          editions = files.filter(f => f.name.endsWith('.json')).sort((a, b) => b.name.localeCompare(a.name));
+          if (!editions.length) { hide('nl-loading'); show('nl-empty'); return; }
+
+          // Setup prev/next nav
+          currentIndex = 0;
+          show('edition-nav');
+          updateEditionNav();
+
+          document.getElementById('edition-prev').addEventListener('click', () => {
+            if (currentIndex < editions.length - 1) { currentIndex++; updateEditionNav(); loadEdition(editions[currentIndex].name); }
+          });
+          document.getElementById('edition-next').addEventListener('click', () => {
+            if (currentIndex > 0) { currentIndex--; updateEditionNav(); loadEdition(editions[currentIndex].name); }
+          });
+
+          await loadEdition(editions[0].name);
+          detectCron();
+          hide('nl-loading');
+          show('nl-content');
+        } catch (err) { hide('nl-loading'); showError(err.message || 'Failed to load.'); }
+      }
+
+      function updateEditionNav() {
+        const label = document.getElementById('edition-label');
+        const prev = document.getElementById('edition-prev');
+        const next = document.getElementById('edition-next');
+        const date = editions[currentIndex].name.replace('.json', '');
+        label.textContent = formatDateShort(date);
+        prev.disabled = currentIndex >= editions.length - 1;
+        next.disabled = currentIndex <= 0;
+      }
+
+      function formatDateShort(dateStr) {
+        try {
+          const d = new Date(dateStr + 'T00:00:00');
+          return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        } catch { return dateStr; }
+      }
+
+      async function loadEdition(filename) {
+        try {
+          const resp = await cachedFetch(`https://api.github.com/repos/${owner}/${repo}/contents/output/${filename}`);
+          if (!resp.ok) throw new Error(`Failed to load ${filename}`);
+          const file = await resp.json();
+          renderNewsletter(JSON.parse(decodeURIComponent(escape(atob(file.content)))));
+        } catch (err) { showError('Failed to load edition: ' + err.message); }
+      }
+
+      function renderNewsletter(nl) {
+        document.getElementById('nl-subject').textContent = nl.subject || 'Newsletter';
+        document.title = (nl.subject || 'Newsletter') + ' — DayBrief';
+        document.getElementById('nl-date').textContent = nl.generated_at
+          ? new Date(nl.generated_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+          : '';
+        document.getElementById('nl-repo').textContent = owner + '/' + repo;
+
+        // Editorial
+        const ed = document.getElementById('nl-editorial');
+        ed.innerHTML = '';
+        (nl.editorial || '').split('\n\n').forEach(p => {
+          if (!p.trim()) return;
+          const el = document.createElement('p');
+          el.textContent = p.trim();
+          ed.appendChild(el);
+        });
+
+        // Highlights
+        const hl = document.getElementById('nl-highlights');
+        hl.innerHTML = '';
+        (nl.highlights || []).forEach((h, i) => {
+          const card = document.createElement('div');
+          card.className = 'group bg-db-card border border-db-border rounded-2xl overflow-hidden transition-colors hover:border-db-blue/30';
+          if (i === 0 && h.thumbnail_url) {
+            card.innerHTML = `
+              <div class="aspect-[2/1] overflow-hidden bg-db-surface">
+                <img src="${esc(h.thumbnail_url)}" alt="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy" />
+              </div>
+              <div class="p-5 md:p-8">
+                <div class="flex items-center gap-2 mb-2 md:mb-3">
+                  <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-db-blue bg-db-blue/10 px-2 py-0.5 rounded-full">${esc(h.source_name)}</span>
+                </div>
+                <h3 class="text-lg md:text-2xl font-extrabold text-db-text mb-2 md:mb-3 leading-tight">
+                  <a href="${esc(h.source_url)}" target="_blank" rel="noopener noreferrer" class="hover:text-db-blue transition-colors">${esc(h.title)}</a>
+                </h3>
+                <p class="font-editorial text-db-text-secondary text-sm md:text-base leading-relaxed italic">${esc(h.analysis)}</p>
+              </div>`;
+          } else {
+            let inner = '';
+            if (h.thumbnail_url) {
+              // Always stack vertically — works on all screens
+              inner = `
+                <div class="aspect-[2/1] overflow-hidden bg-db-surface">
+                  <img src="${esc(h.thumbnail_url)}" alt="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy" />
+                </div>
+                <div class="p-4 md:p-6">
+                  <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-db-text-muted">${esc(h.source_name)}</span>
+                  <h3 class="text-[15px] md:text-base font-bold text-db-text mb-1.5 mt-1 leading-snug">
+                    <a href="${esc(h.source_url)}" target="_blank" rel="noopener noreferrer" class="hover:text-db-blue transition-colors">${esc(h.title)}</a>
+                  </h3>
+                  <p class="text-sm text-db-text-secondary leading-relaxed">${esc(h.analysis)}</p>
+                </div>`;
+            } else {
+              inner = `<div class="p-4 md:p-6">
+                <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-db-text-muted">${esc(h.source_name)}</span>
+                <h3 class="text-[15px] md:text-base font-bold text-db-text mb-1.5 mt-1 leading-snug">
+                  <a href="${esc(h.source_url)}" target="_blank" rel="noopener noreferrer" class="hover:text-db-blue transition-colors">${esc(h.title)}</a>
+                </h3>
+                <p class="text-sm text-db-text-secondary leading-relaxed">${esc(h.analysis)}</p>
+              </div>`;
+            }
+            card.innerHTML = inner;
+          }
+          hl.appendChild(card);
+        });
+
+        // Resources
+        const rs = document.getElementById('nl-resources');
+        const rsSection = document.getElementById('nl-resources-section');
+        rs.innerHTML = '';
+        if (nl.resources?.length) {
+          rsSection.classList.remove('hidden');
+          nl.resources.forEach(r => {
+            const card = document.createElement('a');
+            card.href = r.source_url || '#';
+            card.target = '_blank';
+            card.rel = 'noopener noreferrer';
+            card.className = 'group block bg-db-card border border-db-border rounded-xl p-5 transition-all hover:border-db-blue/30 hover:bg-db-surface';
+            card.innerHTML = `
+              <p class="text-[10px] font-bold uppercase tracking-[0.15em] text-db-text-muted mb-2">${esc(r.source_name)}</p>
+              <p class="text-sm font-bold text-db-text mb-1.5 group-hover:text-db-blue transition-colors leading-snug">${esc(r.title)}</p>
+              <p class="text-xs text-db-text-secondary leading-relaxed">${esc(r.summary)}</p>`;
+            rs.appendChild(card);
+          });
+        } else {
+          rsSection.classList.add('hidden');
+        }
+      }
+
+      // Translate cron to human-readable text
+      function cronToHuman(cron) {
+        const parts = cron.trim().split(/\s+/);
+        if (parts.length < 5) return null;
+        const [min, hour, , , dow] = parts;
+
+        const h = parseInt(hour);
+        const timeStr = isNaN(h) ? '' : `at ${h}:${min.padStart(2, '0')} UTC`;
+
+        const dayMap = { '0': 'Sunday', '1': 'Monday', '2': 'Tuesday', '3': 'Wednesday', '4': 'Thursday', '5': 'Friday', '6': 'Saturday', '7': 'Sunday' };
+
+        if (dow === '*') return `Every day ${timeStr}`;
+        if (dow === '1-5') return `Weekdays ${timeStr}`;
+        if (dow === '0,6' || dow === '6,0') return `Weekends ${timeStr}`;
+
+        // Single day
+        if (dayMap[dow]) return `Every ${dayMap[dow]} ${timeStr}`;
+
+        // List of days
+        const days = dow.split(',').map(d => dayMap[d.trim()]).filter(Boolean);
+        if (days.length) return `${days.join(', ')} ${timeStr}`;
+
+        return `Scheduled ${timeStr}`;
+      }
+
+      async function detectCron() {
+        try {
+          const resp = await cachedFetch(`https://api.github.com/repos/${owner}/${repo}/contents/.github/workflows`);
+          if (!resp.ok) return;
+          const files = await resp.json();
+          for (const f of files.filter(f => f.name.endsWith('.yml') || f.name.endsWith('.yaml'))) {
+            const fResp = await cachedFetch(`https://api.github.com/repos/${owner}/${repo}/contents/.github/workflows/${f.name}`);
+            if (!fResp.ok) continue;
+            const data = await fResp.json();
+            const content = decodeURIComponent(escape(atob(data.content)));
+            const m = content.match(/cron:\s*['"](.+?)['"]/);
+            if (m && content.includes('daybrief')) {
+              const human = cronToHuman(m[1]);
+              document.getElementById('nl-cron-text').textContent = human || m[1];
+              show('nl-schedule');
+              break;
+            }
+          }
+        } catch {}
+      }
+
+      async function cachedFetch(url) {
+        const cached = sessionStorage.getItem(url);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp < 5 * 60 * 1000)
+            return new Response(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        }
+        const resp = await fetch(url, { headers: { Accept: 'application/vnd.github.v3+json' } });
+        if (resp.ok) { const data = await resp.clone().json(); try { sessionStorage.setItem(url, JSON.stringify({ data, timestamp: Date.now() })); } catch {} }
+        return resp;
+      }
+
+      function show(id) { document.getElementById(id)?.classList.remove('hidden'); }
+      function hide(id) { document.getElementById(id)?.classList.add('hidden'); }
+      function showError(msg) { hide('nl-loading'); const el = document.getElementById('nl-error'); el.classList.remove('hidden'); el.querySelector('div').textContent = msg; }
+      function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+    </script>
+  </body>
+</html>

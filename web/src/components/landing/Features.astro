@@ -1,0 +1,59 @@
+---
+const features = [
+  {
+    title: 'Multi-source',
+    description: 'RSS, YouTube, and Podcasts — all unified into one content stream.',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"/>`,
+  },
+  {
+    title: 'Gemini AI',
+    description: 'Two-pass summarization: individual analysis, then editorial synthesis.',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>`,
+  },
+  {
+    title: 'Zero infra',
+    description: 'Runs entirely on GitHub Actions. No server, no database, no deployment.',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>`,
+  },
+  {
+    title: 'Incremental',
+    description: 'Only processes content published since the last run. No duplicates.',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>`,
+  },
+  {
+    title: 'Web dashboard',
+    description: 'Edit your config.yaml visually. Add sources, tweak settings, save to repo.',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>`,
+  },
+  {
+    title: 'Shareable archive',
+    description: 'Every edition is stored as JSON. Share a public page with your audience.',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>`,
+  },
+];
+---
+
+<section class="border-t border-db-border py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="text-center mb-14">
+      <p class="text-db-blue text-sm font-semibold mb-3">Features</p>
+      <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">
+        Everything you need, nothing you don't
+      </h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {features.map((feature) => (
+        <div class="group bg-db-card border border-db-border rounded-2xl p-6 hover:border-db-blue/30 transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-db-blue/10 flex items-center justify-center text-db-blue mb-4 group-hover:bg-db-blue/15 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <Fragment set:html={feature.icon} />
+            </svg>
+          </div>
+          <h3 class="text-[15px] font-bold text-db-text mb-1.5">{feature.title}</h3>
+          <p class="text-sm text-db-text-secondary leading-relaxed">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

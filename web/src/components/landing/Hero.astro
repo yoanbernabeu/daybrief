@@ -1,0 +1,81 @@
+---
+const base = import.meta.env.BASE_URL;
+---
+
+<section class="relative overflow-hidden">
+  <!-- Animated gradient orbs -->
+  <div class="hero-orb absolute top-[-200px] left-[30%] w-[600px] h-[400px] rounded-full bg-db-blue/[0.07] blur-[120px] pointer-events-none"></div>
+  <div class="hero-orb-2 absolute top-[-100px] right-[20%] w-[400px] h-[350px] rounded-full bg-indigo-500/[0.05] blur-[100px] pointer-events-none"></div>
+  <div class="hero-orb-3 absolute bottom-[-150px] left-[50%] w-[500px] h-[300px] rounded-full bg-blue-600/[0.04] blur-[100px] pointer-events-none"></div>
+
+  <!-- Subtle grid -->
+  <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px); background-size: 80px 80px;"></div>
+
+  <div class="relative max-w-4xl mx-auto px-4 md:px-6 pt-20 pb-16 md:pt-36 md:pb-32 text-center">
+    <!-- Badge -->
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-db-blue/10 border border-db-blue/20 text-db-blue text-xs font-medium mb-8">
+      <span class="w-1.5 h-1.5 rounded-full bg-db-blue"></span>
+      Open source &middot; Self-hosted
+    </div>
+
+    <!-- Headline -->
+    <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
+      Stop scrolling feeds.<br class="hidden sm:block" />
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-db-blue to-blue-400">Let AI read for you.</span>
+    </h1>
+
+    <!-- Sub -->
+    <p class="text-base md:text-xl text-db-text-secondary leading-relaxed max-w-2xl mx-auto mb-10">
+      DayBrief monitors your RSS feeds, YouTube channels, and podcasts overnight. Every morning, Gemini AI delivers a concise newsletter with only what matters. Set it up once on GitHub Actions — no server to manage.
+    </p>
+
+    <!-- CTAs -->
+    <div class="flex flex-col sm:flex-row justify-center gap-3">
+      <a
+        href="https://github.com/yoanbernabeu/daybrief"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center gap-2 bg-db-blue text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-db-blue-hover hover:shadow-[0_0_24px_rgba(59,130,246,0.25)]"
+      >
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        Get Started
+      </a>
+      <a
+        href={`${base}/admin/`}
+        class="inline-flex items-center justify-center gap-2 text-db-text border border-db-border px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-white/5 hover:border-white/20"
+      >
+        Open Dashboard
+        <svg class="w-4 h-4 text-db-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <!-- Social proof hint -->
+    <p class="mt-8 text-xs text-db-text-muted">
+      5 min setup &middot; Open source &middot; Works with any public or private repo
+    </p>
+  </div>
+</section>
+
+<style>
+  @keyframes orb-float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -20px) scale(1.05); }
+    66% { transform: translate(-20px, 15px) scale(0.97); }
+  }
+  @keyframes orb-float-2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-25px, 20px) scale(0.96); }
+    66% { transform: translate(15px, -25px) scale(1.04); }
+  }
+  @keyframes orb-float-3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, -10px) scale(1.03); }
+  }
+  .hero-orb { animation: orb-float 12s ease-in-out infinite; }
+  .hero-orb-2 { animation: orb-float-2 15s ease-in-out infinite; }
+  .hero-orb-3 { animation: orb-float-3 10s ease-in-out infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-orb, .hero-orb-2, .hero-orb-3 { animation: none; }
+  }
+</style>

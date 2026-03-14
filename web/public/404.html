@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Redirecting...</title>
+<script>
+  // Intercept /daybrief/user/repo → /daybrief/newsletter/?owner=user&repo=repo
+  (function() {
+    var path = window.location.pathname;
+    var base = '/daybrief';
+    var relative = path.startsWith(base) ? path.slice(base.length) : path;
+    var parts = relative.replace(/^\/|\/$/g, '').split('/');
+
+    if (parts.length === 2 && parts[0] && parts[1]) {
+      var owner = parts[0];
+      var repo = parts[1];
+      window.location.replace(base + '/newsletter/?owner=' + encodeURIComponent(owner) + '&repo=' + encodeURIComponent(repo));
+    } else {
+      window.location.replace(base + '/');
+    }
+  })();
+</script>
+</head>
+<body>
+<p>Redirecting...</p>
+</body>
+</html>

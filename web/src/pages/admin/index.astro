@@ -1,0 +1,592 @@
+---
+import '../../styles/global.css';
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <title>Dashboard — DayBrief</title>
+  </head>
+  <body class="bg-db-dark text-db-text">
+    <div id="app-data" data-base={base}></div>
+
+    <div class="flex h-screen overflow-hidden">
+
+      <!-- ===== MOBILE OVERLAY ===== -->
+      <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden" aria-hidden="true"></div>
+
+      <!-- ===== SIDEBAR ===== -->
+      <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-60 bg-db-surface border-r border-db-border flex flex-col -translate-x-full lg:translate-x-0 lg:static lg:z-auto transition-transform duration-200">
+        <!-- Logo -->
+        <div class="px-5 h-14 flex items-center justify-between border-b border-db-border">
+          <a href={base} class="flex items-center gap-2 text-db-text font-bold text-[15px] hover:text-db-blue transition-colors">
+            <div class="w-6 h-6 rounded-md bg-db-blue flex items-center justify-center">
+              <span class="text-white text-xs font-extrabold">D</span>
+            </div>
+            DayBrief
+          </a>
+          <button id="sidebar-close" class="lg:hidden p-1 text-db-text-muted hover:text-db-text transition-colors" aria-label="Close menu">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Repo info -->
+        <div class="px-5 py-3 border-b border-db-border">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-db-text-muted mb-0.5">Repository</p>
+          <p id="sidebar-repo" class="text-sm text-db-text-secondary truncate"></p>
+        </div>
+
+        <!-- Nav -->
+        <nav class="flex-1 px-3 py-4 space-y-1">
+          <button data-tab="settings" class="nav-btn active w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Settings
+          </button>
+          <button data-tab="sources" class="nav-btn w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
+            Sources
+          </button>
+          <button data-tab="preview" class="nav-btn w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            Preview
+          </button>
+          <button data-tab="share" class="nav-btn w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+            Share
+          </button>
+        </nav>
+
+        <!-- Bottom -->
+        <div class="px-3 py-4 border-t border-db-border space-y-1">
+          <a href={base} class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-db-text-muted hover:text-db-text hover:bg-white/5 transition-colors">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            Back to site
+          </a>
+          <button id="logout-btn" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-db-text-muted hover:text-red-400 hover:bg-red-500/5 transition-colors text-left">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      <!-- ===== MAIN CONTENT ===== -->
+      <main class="flex-1 overflow-y-auto w-full">
+        <!-- Top bar -->
+        <div class="sticky top-0 z-10 bg-db-dark/80 backdrop-blur-xl border-b border-db-border px-4 md:px-8 h-14 flex items-center gap-3">
+          <button id="sidebar-open" class="lg:hidden p-1.5 -ml-1 text-db-text-muted hover:text-db-text transition-colors" aria-label="Open menu">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <h1 id="page-title" class="text-sm font-bold">Settings</h1>
+        </div>
+
+        <div class="px-4 md:px-8 py-6 md:py-8 max-w-3xl">
+          <!-- Loading -->
+          <div id="loading" class="text-center py-20 text-db-text-secondary">Loading configuration...</div>
+          <div id="error-banner" class="hidden mb-6 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"></div>
+
+          <!-- ===== TAB: SETTINGS ===== -->
+          <div id="tab-settings" class="tab-panel hidden space-y-6">
+            <div>
+              <h2 class="text-lg font-extrabold mb-1">General settings</h2>
+              <p class="text-sm text-db-text-secondary mb-6">Configure the AI model, newsletter options, and email settings.</p>
+            </div>
+
+            <!-- Gemini -->
+            <div class="bg-db-card rounded-2xl border border-db-border p-6">
+              <h3 class="text-sm font-bold text-db-text mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-db-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                Gemini AI
+              </h3>
+              <div>
+                <label for="gemini-model" class="block text-xs font-medium text-db-text-secondary mb-1.5">Model</label>
+                <input type="text" id="gemini-model" class="w-full px-4 py-2.5 rounded-xl bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+              </div>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="bg-db-card rounded-2xl border border-db-border p-6">
+              <h3 class="text-sm font-bold text-db-text mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-db-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                Newsletter
+              </h3>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="nl-language" class="block text-xs font-medium text-db-text-secondary mb-1.5">Language</label>
+                  <input type="text" id="nl-language" class="w-full px-4 py-2.5 rounded-xl bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+                </div>
+                <div>
+                  <label for="nl-max-highlights" class="block text-xs font-medium text-db-text-secondary mb-1.5">Max highlights</label>
+                  <input type="number" id="nl-max-highlights" min="1" max="20" class="w-full px-4 py-2.5 rounded-xl bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+                </div>
+                <div>
+                  <label for="nl-lookback" class="block text-xs font-medium text-db-text-secondary mb-1.5">Default lookback</label>
+                  <input type="text" id="nl-lookback" placeholder="48h" class="w-full px-4 py-2.5 rounded-xl bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+                </div>
+                <div class="sm:col-span-2">
+                  <label for="nl-editorial-prompt" class="block text-xs font-medium text-db-text-secondary mb-1.5">Editorial prompt <span class="text-db-text-muted">(optional)</span></label>
+                  <textarea id="nl-editorial-prompt" rows="3" class="w-full px-4 py-2.5 rounded-xl bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors resize-y"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mail -->
+            <div class="bg-db-card rounded-2xl border border-db-border p-6">
+              <h3 class="text-sm font-bold text-db-text mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-db-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                Mail
+              </h3>
+              <div>
+                <label for="mail-prefix" class="block text-xs font-medium text-db-text-secondary mb-1.5">Subject prefix</label>
+                <input type="text" id="mail-prefix" class="w-full px-4 py-2.5 rounded-xl bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+              </div>
+            </div>
+
+            <!-- Save -->
+            <div class="flex items-center gap-4 pt-2">
+              <button id="save-settings-btn" class="save-btn bg-db-blue text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-all hover:bg-db-blue-hover hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] disabled:opacity-50 disabled:cursor-not-allowed">Save changes</button>
+              <span id="save-settings-status" class="save-status text-sm hidden"></span>
+            </div>
+          </div>
+
+          <!-- ===== TAB: SOURCES ===== -->
+          <div id="tab-sources" class="tab-panel hidden space-y-6">
+            <div>
+              <h2 class="text-lg font-extrabold mb-1">Content sources</h2>
+              <p class="text-sm text-db-text-secondary mb-6">Manage the RSS feeds, YouTube channels, and podcasts DayBrief monitors.</p>
+            </div>
+
+            <!-- RSS -->
+            <div class="bg-db-card rounded-2xl border border-db-border p-6">
+              <h3 class="text-sm font-bold text-db-text mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 24 24"><path d="M6.18 15.64a2.18 2.18 0 010 4.36 2.18 2.18 0 010-4.36zM4 4.44A15.56 15.56 0 0119.56 20h-2.83A12.73 12.73 0 004 7.27V4.44zM4 10.1a9.9 9.9 0 019.9 9.9h-2.83A7.07 7.07 0 004 12.93V10.1z"/></svg>
+                RSS Feeds
+              </h3>
+              <div id="rss-list" class="space-y-2.5"></div>
+              <button type="button" id="add-rss" class="mt-4 text-sm text-db-blue hover:text-blue-400 font-semibold transition-colors">+ Add RSS feed</button>
+            </div>
+
+            <!-- YouTube -->
+            <div class="bg-db-card rounded-2xl border border-db-border p-6">
+              <h3 class="text-sm font-bold text-db-text mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                YouTube Channels
+              </h3>
+              <div id="youtube-list" class="space-y-2.5"></div>
+              <button type="button" id="add-youtube" class="mt-4 text-sm text-db-blue hover:text-blue-400 font-semibold transition-colors">+ Add YouTube channel</button>
+            </div>
+
+            <!-- Podcasts -->
+            <div class="bg-db-card rounded-2xl border border-db-border p-6">
+              <h3 class="text-sm font-bold text-db-text mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                Podcasts
+              </h3>
+              <div id="podcasts-list" class="space-y-2.5"></div>
+              <button type="button" id="add-podcast" class="mt-4 text-sm text-db-blue hover:text-blue-400 font-semibold transition-colors">+ Add Podcast</button>
+            </div>
+
+            <!-- Save -->
+            <div class="flex items-center gap-4 pt-2">
+              <button id="save-sources-btn" class="save-btn bg-db-blue text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-all hover:bg-db-blue-hover hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] disabled:opacity-50 disabled:cursor-not-allowed">Save changes</button>
+              <span id="save-sources-status" class="save-status text-sm hidden"></span>
+            </div>
+          </div>
+
+          <!-- ===== TAB: PREVIEW ===== -->
+          <div id="tab-preview" class="tab-panel hidden">
+            <div class="mb-6">
+              <h2 class="text-lg font-extrabold mb-1">Newsletter preview</h2>
+              <p class="text-sm text-db-text-secondary">Preview past newsletters generated by DayBrief.</p>
+            </div>
+
+            <div id="preview-loading" class="text-center py-16 text-db-text-secondary">Loading newsletters...</div>
+            <div id="preview-empty" class="hidden text-center py-16">
+              <p class="text-db-text-secondary">No newsletters found yet.</p>
+              <p class="text-sm text-db-text-muted mt-1">Run the GitHub Action to generate your first newsletter.</p>
+            </div>
+
+            <div id="preview-content" class="hidden">
+              <div class="mb-6">
+                <label for="preview-select" class="block text-xs font-medium text-db-text-secondary mb-1.5">Edition</label>
+                <select id="preview-select" class="px-4 py-2.5 rounded-xl bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors"></select>
+              </div>
+
+              <div class="bg-db-card border border-db-border rounded-2xl overflow-hidden">
+                <div class="px-6 py-5 border-b border-db-border">
+                  <h3 id="preview-subject" class="font-bold text-db-text"></h3>
+                  <p id="preview-date" class="text-xs text-db-text-muted mt-1"></p>
+                </div>
+                <div class="px-6 py-5 border-b border-db-border">
+                  <p class="text-xs font-bold uppercase tracking-wider text-db-text-muted mb-3">Editorial</p>
+                  <div id="preview-editorial" class="text-sm text-db-text-secondary leading-relaxed space-y-3"></div>
+                </div>
+                <div class="px-6 py-5 border-b border-db-border">
+                  <p class="text-xs font-bold uppercase tracking-wider text-db-text-muted mb-3">Highlights</p>
+                  <div id="preview-highlights" class="space-y-3"></div>
+                </div>
+                <div id="preview-resources-section" class="px-6 py-5">
+                  <p class="text-xs font-bold uppercase tracking-wider text-db-text-muted mb-3">Resources</p>
+                  <div id="preview-resources" class="space-y-2.5"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== TAB: SHARE ===== -->
+          <div id="tab-share" class="tab-panel hidden">
+            <div class="mb-6">
+              <h2 class="text-lg font-extrabold mb-1">Share your newsletter</h2>
+              <p class="text-sm text-db-text-secondary">Share a public page where anyone can read your newsletters.</p>
+            </div>
+
+            <div class="bg-db-card rounded-2xl border border-db-border p-6 space-y-6">
+              <!-- Public URL -->
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-db-text-muted mb-3">Public URL</p>
+                <div class="flex items-center gap-2">
+                  <div id="share-url-box" class="flex-1 bg-db-surface border border-db-border rounded-xl px-4 py-3 font-mono text-sm text-db-text truncate"></div>
+                  <button id="copy-url-btn" class="shrink-0 bg-db-blue text-white px-4 py-3 rounded-xl text-sm font-semibold hover:bg-db-blue-hover transition-colors">Copy</button>
+                </div>
+                <p id="copy-feedback" class="text-xs text-green-400 mt-2 hidden">Copied to clipboard!</p>
+              </div>
+
+              <!-- Short path -->
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-db-text-muted mb-3">Short path</p>
+                <div class="flex items-center gap-2">
+                  <div id="share-short-box" class="flex-1 bg-db-surface border border-db-border rounded-xl px-4 py-3 font-mono text-sm text-db-text truncate"></div>
+                  <button id="copy-short-btn" class="shrink-0 bg-white/5 border border-db-border text-db-text px-4 py-3 rounded-xl text-sm font-semibold hover:bg-white/10 transition-colors">Copy</button>
+                </div>
+                <p class="text-xs text-db-text-muted mt-2">Redirects via GitHub Pages 404 handler.</p>
+              </div>
+
+              <!-- Info -->
+              <div class="bg-db-surface rounded-xl border border-db-border p-4">
+                <p class="text-sm text-db-text-secondary leading-relaxed">
+                  The public page works without authentication for <strong class="text-db-text">public repositories</strong>. It uses the GitHub API to fetch newsletters from the <code class="bg-db-dark px-1 py-0.5 rounded text-xs">output/</code> directory. Unauthenticated requests are limited to 60/hour.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+    <!-- Source row templates -->
+    <template id="rss-template">
+      <div class="source-row flex flex-wrap sm:flex-nowrap items-center gap-2">
+        <input type="text" data-field="name" placeholder="Name" class="w-full sm:w-32 sm:shrink-0 px-3 py-2 rounded-lg bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+        <input type="url" data-field="url" placeholder="https://example.com/feed.xml" class="flex-1 px-3 py-2 rounded-lg bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+        <button type="button" class="remove-btn shrink-0 text-db-text-muted hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-500/5" aria-label="Remove">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      </div>
+    </template>
+    <template id="youtube-template">
+      <div class="source-row flex flex-wrap sm:flex-nowrap items-center gap-2">
+        <input type="text" data-field="name" placeholder="Name" class="w-full sm:w-32 sm:shrink-0 px-3 py-2 rounded-lg bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+        <input type="text" data-field="channel_id" placeholder="UCxxxxxxxx" class="flex-1 px-3 py-2 rounded-lg bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+        <button type="button" class="remove-btn shrink-0 text-db-text-muted hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-500/5" aria-label="Remove">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      </div>
+    </template>
+    <template id="podcast-template">
+      <div class="source-row flex flex-wrap sm:flex-nowrap items-center gap-2">
+        <input type="text" data-field="name" placeholder="Name" class="w-full sm:w-32 sm:shrink-0 px-3 py-2 rounded-lg bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+        <input type="url" data-field="url" placeholder="https://example.com/podcast.xml" class="flex-1 px-3 py-2 rounded-lg bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+        <button type="button" class="remove-btn shrink-0 text-db-text-muted hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-500/5" aria-label="Remove">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      </div>
+    </template>
+
+    <!-- Auth guard -->
+    <script define:vars={{ base }}>
+      if (!localStorage.getItem('daybrief_token')) {
+        window.location.href = base + '/login/';
+      }
+    </script>
+
+    <!-- Sidebar mobile toggle -->
+    <script>
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      const openBtn = document.getElementById('sidebar-open');
+      const closeBtn = document.getElementById('sidebar-close');
+
+      function openSidebar() {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+      }
+      function closeSidebar() {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+
+      openBtn.addEventListener('click', openSidebar);
+      closeBtn.addEventListener('click', closeSidebar);
+      overlay.addEventListener('click', closeSidebar);
+
+      // Close sidebar when a nav button is clicked on mobile
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (window.innerWidth < 1024) closeSidebar();
+        });
+      });
+    </script>
+
+    <!-- Main script (bundled by Astro — can import npm packages) -->
+    <script>
+      import * as jsYaml from 'js-yaml';
+
+      const base = document.getElementById('app-data')?.dataset.base || '';
+      const owner = localStorage.getItem('daybrief_owner') || '';
+      const repo = localStorage.getItem('daybrief_repo') || '';
+      const token = localStorage.getItem('daybrief_token') || '';
+      const API = 'https://api.github.com';
+      const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' };
+
+      let configSha = '';
+      let previewLoaded = false;
+
+      // ===== SIDEBAR REPO =====
+      document.getElementById('sidebar-repo')!.textContent = `${owner}/${repo}`;
+
+      // ===== SHARE URLs =====
+      const fullUrl = `${window.location.origin}${base}/newsletter/?owner=${owner}&repo=${repo}`;
+      const shortUrl = `${window.location.origin}${base}/${owner}/${repo}`;
+      document.getElementById('share-url-box')!.textContent = fullUrl;
+      document.getElementById('share-short-box')!.textContent = shortUrl;
+
+      document.getElementById('copy-url-btn')!.addEventListener('click', () => copyToClipboard(fullUrl, 'copy-feedback'));
+      document.getElementById('copy-short-btn')!.addEventListener('click', () => copyToClipboard(shortUrl, 'copy-feedback'));
+
+      function copyToClipboard(text: string, feedbackId: string) {
+        navigator.clipboard.writeText(text);
+        const fb = document.getElementById(feedbackId)!;
+        fb.classList.remove('hidden');
+        setTimeout(() => fb.classList.add('hidden'), 2000);
+      }
+
+      // ===== NAV TABS =====
+      const navBtns = document.querySelectorAll('.nav-btn');
+      const panels = document.querySelectorAll('.tab-panel');
+      const titles: Record<string, string> = { settings: 'Settings', sources: 'Sources', preview: 'Preview', share: 'Share' };
+
+      navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = (btn as HTMLElement).dataset.tab!;
+          navBtns.forEach(b => b.classList.remove('active', 'bg-white/5', 'text-db-text'));
+          navBtns.forEach(b => b.classList.add('text-db-text-muted'));
+          btn.classList.add('active', 'bg-white/5', 'text-db-text');
+          btn.classList.remove('text-db-text-muted');
+          panels.forEach(p => p.classList.add('hidden'));
+          document.getElementById(`tab-${tab}`)?.classList.remove('hidden');
+          document.getElementById('page-title')!.textContent = titles[tab] || tab;
+
+          if (tab === 'preview' && !previewLoaded) loadPreview();
+        });
+      });
+
+      // Init active state
+      navBtns.forEach(b => b.classList.add('text-db-text-muted'));
+      document.querySelector('.nav-btn.active')?.classList.add('bg-white/5', 'text-db-text');
+      document.querySelector('.nav-btn.active')?.classList.remove('text-db-text-muted');
+
+      // ===== LOGOUT =====
+      document.getElementById('logout-btn')!.addEventListener('click', () => {
+        localStorage.removeItem('daybrief_token');
+        localStorage.removeItem('daybrief_owner');
+        localStorage.removeItem('daybrief_repo');
+        window.location.href = base + '/login/';
+      });
+
+      // ===== LOAD CONFIG =====
+      (async () => {
+        try {
+          const resp = await fetch(`${API}/repos/${owner}/${repo}/contents/config.yaml`, { headers });
+
+          if (!resp.ok) {
+            if (resp.status === 404) showError('config.yaml not found in the repository.');
+            else if (resp.status === 401) { localStorage.removeItem('daybrief_token'); window.location.href = base + '/login/'; return; }
+            else showError(`Failed to load config (${resp.status}).`);
+            document.getElementById('loading')!.classList.add('hidden');
+            return;
+          }
+
+          const file = await resp.json();
+          configSha = file.sha;
+          const raw = (jsYaml.load(decodeURIComponent(escape(atob(file.content)))) as any) || {};
+
+          (document.getElementById('gemini-model') as HTMLInputElement).value = raw.gemini?.model || 'gemini-3-flash-preview';
+          (document.getElementById('nl-language') as HTMLInputElement).value = raw.newsletter?.language || 'en';
+          (document.getElementById('nl-max-highlights') as HTMLInputElement).value = raw.newsletter?.max_highlights || 5;
+          (document.getElementById('nl-lookback') as HTMLInputElement).value = raw.newsletter?.default_lookback || '48h';
+          (document.getElementById('nl-editorial-prompt') as HTMLTextAreaElement).value = raw.newsletter?.editorial_prompt || '';
+          (document.getElementById('mail-prefix') as HTMLInputElement).value = raw.mail?.subject_prefix || '';
+
+          (raw.sources?.rss || []).forEach((s: any) => addSourceRow('rss', s));
+          (raw.sources?.youtube || []).forEach((s: any) => addSourceRow('youtube', s));
+          (raw.sources?.podcasts || []).forEach((s: any) => addSourceRow('podcasts', s));
+
+          document.getElementById('loading')!.classList.add('hidden');
+          document.getElementById('tab-settings')!.classList.remove('hidden');
+        } catch (err: any) {
+          showError('Failed to load configuration: ' + (err.message || err));
+          document.getElementById('loading')!.classList.add('hidden');
+        }
+      })();
+
+      // ===== SOURCE ROWS =====
+      function addSourceRow(type: string, data: any = {}) {
+        const templateId = type === 'youtube' ? 'youtube-template' : type === 'podcasts' ? 'podcast-template' : 'rss-template';
+        const clone = (document.getElementById(templateId) as HTMLTemplateElement).content.cloneNode(true) as DocumentFragment;
+        const row = clone.querySelector('.source-row') as HTMLElement;
+
+        if (type === 'youtube') {
+          (row.querySelector('[data-field="name"]') as HTMLInputElement).value = data.name || '';
+          (row.querySelector('[data-field="channel_id"]') as HTMLInputElement).value = data.channel_id || '';
+        } else {
+          (row.querySelector('[data-field="name"]') as HTMLInputElement).value = data.name || '';
+          (row.querySelector('[data-field="url"]') as HTMLInputElement).value = data.url || '';
+        }
+
+        row.querySelector('.remove-btn')!.addEventListener('click', () => row.remove());
+        document.getElementById(`${type}-list`)!.appendChild(clone);
+      }
+
+      document.getElementById('add-rss')!.addEventListener('click', () => addSourceRow('rss'));
+      document.getElementById('add-youtube')!.addEventListener('click', () => addSourceRow('youtube'));
+      document.getElementById('add-podcast')!.addEventListener('click', () => addSourceRow('podcasts'));
+
+      // ===== SAVE (both buttons do the same) =====
+      document.querySelectorAll('.save-btn').forEach(btn => {
+        btn.addEventListener('click', saveConfig);
+      });
+
+      async function saveConfig() {
+        const btns = document.querySelectorAll('.save-btn') as NodeListOf<HTMLButtonElement>;
+        const statuses = document.querySelectorAll('.save-status');
+        btns.forEach(b => { b.disabled = true; b.textContent = 'Saving...'; });
+        statuses.forEach(s => s.classList.add('hidden'));
+
+        const config = {
+          gemini: { model: (document.getElementById('gemini-model') as HTMLInputElement).value },
+          newsletter: {
+            language: (document.getElementById('nl-language') as HTMLInputElement).value,
+            max_highlights: parseInt((document.getElementById('nl-max-highlights') as HTMLInputElement).value) || 5,
+            default_lookback: (document.getElementById('nl-lookback') as HTMLInputElement).value,
+            editorial_prompt: (document.getElementById('nl-editorial-prompt') as HTMLTextAreaElement).value,
+          },
+          mail: { subject_prefix: (document.getElementById('mail-prefix') as HTMLInputElement).value },
+          sources: {
+            rss: collectSources('rss', ['name', 'url']),
+            youtube: collectSources('youtube', ['name', 'channel_id']),
+            podcasts: collectSources('podcasts', ['name', 'url']),
+          },
+        };
+        if (!config.newsletter.editorial_prompt) delete (config.newsletter as any).editorial_prompt;
+
+        try {
+          const yamlContent = jsYaml.dump(config, { indent: 2, lineWidth: -1, noRefs: true });
+          const resp = await fetch(`${API}/repos/${owner}/${repo}/contents/config.yaml`, {
+            method: 'PUT',
+            headers: { ...headers, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: 'Update config.yaml via DayBrief Dashboard', content: btoa(unescape(encodeURIComponent(yamlContent))), sha: configSha, branch: 'main' }),
+          });
+          if (!resp.ok) { const d = await resp.json(); throw new Error(d.message || `Error ${resp.status}`); }
+          configSha = (await resp.json()).content.sha;
+          statuses.forEach(s => { s.textContent = 'Saved!'; s.classList.remove('hidden', 'text-red-400'); s.classList.add('text-green-400'); });
+        } catch (err: any) {
+          statuses.forEach(s => { s.textContent = 'Error: ' + err.message; s.classList.remove('hidden', 'text-green-400'); s.classList.add('text-red-400'); });
+        }
+        btns.forEach(b => { b.disabled = false; b.textContent = 'Save changes'; });
+      }
+
+      function collectSources(type: string, fields: string[]) {
+        const rows = document.getElementById(`${type}-list`)!.querySelectorAll('.source-row');
+        const sources: any[] = [];
+        rows.forEach(row => {
+          const obj: any = {};
+          let hasValue = false;
+          fields.forEach(f => { const v = (row.querySelector(`[data-field="${f}"]`) as HTMLInputElement)?.value?.trim() || ''; obj[f] = v; if (v) hasValue = true; });
+          if (hasValue) sources.push(obj);
+        });
+        return sources;
+      }
+
+      // ===== PREVIEW =====
+      async function loadPreview() {
+        previewLoaded = true;
+        try {
+          const resp = await fetch(`${API}/repos/${owner}/${repo}/contents/output`, { headers });
+          if (!resp.ok) {
+            document.getElementById('preview-loading')!.classList.add('hidden');
+            document.getElementById('preview-empty')!.classList.remove('hidden');
+            return;
+          }
+          const files = (await resp.json() as any[]).filter(f => f.name.endsWith('.json')).sort((a, b) => b.name.localeCompare(a.name));
+          if (!files.length) { document.getElementById('preview-loading')!.classList.add('hidden'); document.getElementById('preview-empty')!.classList.remove('hidden'); return; }
+
+          const select = document.getElementById('preview-select') as HTMLSelectElement;
+          files.forEach((f, i) => { const o = document.createElement('option'); o.value = f.name; o.textContent = f.name.replace('.json', ''); if (i === 0) o.selected = true; select.appendChild(o); });
+          select.addEventListener('change', () => loadEdition(select.value));
+          await loadEdition(files[0].name);
+          document.getElementById('preview-loading')!.classList.add('hidden');
+          document.getElementById('preview-content')!.classList.remove('hidden');
+        } catch {
+          document.getElementById('preview-loading')!.classList.add('hidden');
+          document.getElementById('preview-empty')!.classList.remove('hidden');
+        }
+      }
+
+      async function loadEdition(filename: string) {
+        const resp = await fetch(`${API}/repos/${owner}/${repo}/contents/output/${filename}`, { headers });
+        if (!resp.ok) return;
+        const file = await resp.json();
+        const nl = JSON.parse(decodeURIComponent(escape(atob(file.content))));
+
+        document.getElementById('preview-subject')!.textContent = nl.subject || 'Newsletter';
+        document.getElementById('preview-date')!.textContent = nl.generated_at ? new Date(nl.generated_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '';
+
+        const ed = document.getElementById('preview-editorial')!;
+        ed.innerHTML = '';
+        (nl.editorial || '').split('\n\n').forEach((p: string) => { if (p.trim()) { const el = document.createElement('p'); el.textContent = p.trim(); ed.appendChild(el); } });
+
+        const hl = document.getElementById('preview-highlights')!;
+        hl.innerHTML = '';
+        (nl.highlights || []).forEach((h: any) => {
+          const d = document.createElement('div');
+          d.className = 'bg-db-surface border border-db-border rounded-xl p-4';
+          d.innerHTML = `<p class="text-sm font-semibold text-db-text mb-0.5"><a href="${esc(h.source_url)}" target="_blank" rel="noopener noreferrer" class="hover:text-db-blue transition-colors">${esc(h.title)}</a></p><p class="text-[11px] text-db-text-muted uppercase tracking-wide mb-2">${esc(h.source_name)}</p><p class="text-sm text-db-text-secondary leading-relaxed">${esc(h.analysis)}</p>`;
+          hl.appendChild(d);
+        });
+
+        const rs = document.getElementById('preview-resources')!;
+        const rsSection = document.getElementById('preview-resources-section')!;
+        rs.innerHTML = '';
+        if (nl.resources?.length) {
+          rsSection.classList.remove('hidden');
+          nl.resources.forEach((r: any) => {
+            const d = document.createElement('div');
+            d.className = 'border-l-2 border-db-border pl-3 py-0.5';
+            d.innerHTML = `<a href="${esc(r.source_url)}" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-db-blue hover:underline">${esc(r.title)}</a><span class="text-db-text-muted text-xs"> — ${esc(r.source_name)}</span><p class="text-sm text-db-text-secondary mt-0.5">${esc(r.summary)}</p>`;
+            rs.appendChild(d);
+          });
+        } else { rsSection.classList.add('hidden'); }
+      }
+
+      function esc(s: string) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+      function showError(msg: string) { const el = document.getElementById('error-banner')!; el.textContent = msg; el.classList.remove('hidden'); }
+    </script>
+  </body>
+</html>

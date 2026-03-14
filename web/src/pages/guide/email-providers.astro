@@ -1,0 +1,197 @@
+---
+import '../../styles/global.css';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="Free Email Providers — DayBrief Guide">
+  <div class="max-w-3xl mx-auto px-4 md:px-6 py-16 md:py-24">
+
+    <div class="mb-12">
+      <a href={`${base}/guide/`} class="text-sm text-db-blue hover:underline mb-4 inline-block">&larr; Back to setup guide</a>
+      <h1 class="text-3xl md:text-4xl font-extrabold text-db-text tracking-tight mb-4">Free Email Providers</h1>
+      <p class="text-db-text-secondary text-lg">DayBrief sends newsletters via SMTP. Here are providers with a permanent free plan — no credit card required.</p>
+    </div>
+
+    <!-- Recommendation -->
+    <div class="bg-db-blue/10 border border-db-blue/20 rounded-2xl p-6 mb-10">
+      <p class="text-sm font-semibold text-db-blue mb-1">Our recommendation</p>
+      <p class="text-sm text-db-text-secondary leading-relaxed">
+        <strong class="text-db-text">Brevo</strong> offers the most generous free tier at 300 emails/day. It's perfect for DayBrief since you typically send one newsletter per day to a handful of recipients.
+      </p>
+    </div>
+
+    <!-- Provider cards -->
+    <div class="space-y-5 mb-12">
+
+      <!-- Brevo -->
+      <div class="bg-db-card border border-db-border rounded-2xl p-6">
+        <div class="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-extrabold text-db-text">Brevo</h2>
+            <p class="text-xs text-db-text-muted">Formerly Sendinblue</p>
+          </div>
+          <span class="shrink-0 text-[10px] font-bold uppercase tracking-wider text-green-400 bg-green-500/10 px-2 py-1 rounded-full">Best free tier</span>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4 mb-4">
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">300</p>
+            <p class="text-[11px] text-db-text-muted">emails / day</p>
+          </div>
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">9,000</p>
+            <p class="text-[11px] text-db-text-muted">emails / month</p>
+          </div>
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">100K</p>
+            <p class="text-[11px] text-db-text-muted">contacts</p>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-db-text-muted mb-2">SMTP Settings</p>
+            <div class="bg-db-surface border border-db-border rounded-xl p-3 font-mono text-xs text-db-text-secondary space-y-1">
+              <p>SMTP_HOST=<span class="text-db-text">smtp-relay.brevo.com</span></p>
+              <p>SMTP_PORT=<span class="text-db-text">587</span></p>
+              <p>SMTP_USERNAME=<span class="text-db-text">your-email@example.com</span></p>
+              <p>SMTP_PASSWORD=<span class="text-db-text">your-smtp-key</span></p>
+            </div>
+          </div>
+          <p class="text-sm text-db-text-secondary">The SMTP key is found in <strong class="text-db-text">Settings &rarr; SMTP & API</strong> after signup. Use your account email as the username.</p>
+        </div>
+        <a href="https://www.brevo.com/pricing/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm font-semibold text-db-blue hover:underline mt-4">
+          Sign up for free
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </div>
+
+      <!-- Resend -->
+      <div class="bg-db-card border border-db-border rounded-2xl p-6">
+        <div class="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-extrabold text-db-text">Resend</h2>
+            <p class="text-xs text-db-text-muted">Developer-focused email API</p>
+          </div>
+          <span class="shrink-0 text-[10px] font-bold uppercase tracking-wider text-db-blue bg-db-blue/10 px-2 py-1 rounded-full">Dev-friendly</span>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4 mb-4">
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">100</p>
+            <p class="text-[11px] text-db-text-muted">emails / day</p>
+          </div>
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">3,000</p>
+            <p class="text-[11px] text-db-text-muted">emails / month</p>
+          </div>
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">1K</p>
+            <p class="text-[11px] text-db-text-muted">contacts</p>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-db-text-muted mb-2">SMTP Settings</p>
+          <div class="bg-db-surface border border-db-border rounded-xl p-3 font-mono text-xs text-db-text-secondary space-y-1">
+            <p>SMTP_HOST=<span class="text-db-text">smtp.resend.com</span></p>
+            <p>SMTP_PORT=<span class="text-db-text">465</span></p>
+            <p>SMTP_USERNAME=<span class="text-db-text">resend</span></p>
+            <p>SMTP_PASSWORD=<span class="text-db-text">re_your_api_key</span></p>
+          </div>
+        </div>
+        <a href="https://resend.com/pricing" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm font-semibold text-db-blue hover:underline mt-4">
+          Sign up for free
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </div>
+
+      <!-- Mailjet -->
+      <div class="bg-db-card border border-db-border rounded-2xl p-6">
+        <div class="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-extrabold text-db-text">Mailjet</h2>
+            <p class="text-xs text-db-text-muted">Email delivery platform</p>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4 mb-4">
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">200</p>
+            <p class="text-[11px] text-db-text-muted">emails / day</p>
+          </div>
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">6,000</p>
+            <p class="text-[11px] text-db-text-muted">emails / month</p>
+          </div>
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">1,500</p>
+            <p class="text-[11px] text-db-text-muted">contacts</p>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-db-text-muted mb-2">SMTP Settings</p>
+          <div class="bg-db-surface border border-db-border rounded-xl p-3 font-mono text-xs text-db-text-secondary space-y-1">
+            <p>SMTP_HOST=<span class="text-db-text">in-v3.mailjet.com</span></p>
+            <p>SMTP_PORT=<span class="text-db-text">587</span></p>
+            <p>SMTP_USERNAME=<span class="text-db-text">your-api-key</span></p>
+            <p>SMTP_PASSWORD=<span class="text-db-text">your-secret-key</span></p>
+          </div>
+        </div>
+        <a href="https://www.mailjet.com/pricing/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm font-semibold text-db-blue hover:underline mt-4">
+          Sign up for free
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </div>
+
+      <!-- Mailtrap -->
+      <div class="bg-db-card border border-db-border rounded-2xl p-6">
+        <div class="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-extrabold text-db-text">Mailtrap</h2>
+            <p class="text-xs text-db-text-muted">Email testing & sending</p>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4 mb-4">
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">150</p>
+            <p class="text-[11px] text-db-text-muted">emails / day</p>
+          </div>
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">1,000</p>
+            <p class="text-[11px] text-db-text-muted">emails / month</p>
+          </div>
+          <div class="bg-db-surface rounded-xl p-3 text-center">
+            <p class="text-xl font-extrabold text-db-text">1</p>
+            <p class="text-[11px] text-db-text-muted">domain</p>
+          </div>
+        </div>
+        <a href="https://mailtrap.io/pricing/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm font-semibold text-db-blue hover:underline">
+          Sign up for free
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Comparison -->
+    <section class="mb-12">
+      <h2 class="text-xl font-extrabold text-db-text mb-4">Quick comparison</h2>
+      <div class="bg-db-card border border-db-border rounded-xl overflow-x-auto">
+        <table class="w-full text-sm min-w-[480px]">
+          <thead><tr class="border-b border-db-border"><th class="text-left px-4 py-3 font-semibold text-db-text">Provider</th><th class="text-left px-4 py-3 font-semibold text-db-text">Emails/day</th><th class="text-left px-4 py-3 font-semibold text-db-text">Emails/month</th><th class="text-left px-4 py-3 font-semibold text-db-text">Forever free</th></tr></thead>
+          <tbody class="text-db-text-secondary">
+            <tr class="border-b border-db-border"><td class="px-4 py-2.5 font-medium text-db-text">Brevo</td><td class="px-4 py-2.5">300</td><td class="px-4 py-2.5">~9,000</td><td class="px-4 py-2.5 text-green-400">Yes</td></tr>
+            <tr class="border-b border-db-border"><td class="px-4 py-2.5 font-medium text-db-text">Mailjet</td><td class="px-4 py-2.5">200</td><td class="px-4 py-2.5">6,000</td><td class="px-4 py-2.5 text-green-400">Yes</td></tr>
+            <tr class="border-b border-db-border"><td class="px-4 py-2.5 font-medium text-db-text">Mailtrap</td><td class="px-4 py-2.5">150</td><td class="px-4 py-2.5">1,000</td><td class="px-4 py-2.5 text-green-400">Yes</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium text-db-text">Resend</td><td class="px-4 py-2.5">100</td><td class="px-4 py-2.5">3,000</td><td class="px-4 py-2.5 text-green-400">Yes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-db-text-muted mt-3">All providers listed offer a permanent free tier with no credit card required. SendGrid and Amazon SES are excluded because their free tiers have been discontinued or are time-limited.</p>
+    </section>
+
+    <!-- Tip -->
+    <div class="bg-db-surface border border-db-border rounded-xl p-5">
+      <p class="text-sm text-db-text-secondary leading-relaxed">
+        <strong class="text-db-text">Tip:</strong> A daily DayBrief newsletter sent to 10 recipients = 10 emails/day. Even the smallest free tier (Resend at 100/day) covers this easily. Pick the provider you're most comfortable with.
+      </p>
+    </div>
+
+  </div>
+</BaseLayout>

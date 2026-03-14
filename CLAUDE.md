@@ -47,6 +47,30 @@ The pipeline runs sequentially in `internal/cli/run.go`:
 - `config.yaml` — Sources, Gemini model, newsletter language/tone, mail prefix
 - `.env` — API keys (GEMINI_API_KEY, YOUTUBE_API_KEY), SMTP credentials, recipients (comma-separated DAYBRIEF_RECIPIENTS)
 
+### Web App (`web/`)
+
+Static Astro 6 site deployed on GitHub Pages (`yoanbernabeu.github.io/daybrief`).
+
+- **Stack**: Astro 6, Tailwind CSS 4, TypeScript, js-yaml
+- **Config**: `web/astro.config.mjs` — base `/daybrief`, static output, Tailwind vite plugin
+- **Font**: Plus Jakarta Sans (body) + Newsreader (newsletter editorial)
+- **Design tokens**: Dark theme defined in `web/src/styles/global.css` (db-dark, db-surface, db-card, db-border, db-blue, etc.)
+
+Key pages:
+- `pages/index.astro` — Landing page (Hero, HowItWorks, Features, DashboardPreview, CTA)
+- `pages/login.astro` — PAT + owner/repo login, stored in localStorage
+- `pages/admin/index.astro` — Standalone dashboard with sidebar (Settings, Sources, Preview, Share tabs). Uses bundled `<script>` with `import * as jsYaml from 'js-yaml'` (NOT `define:vars`, which doesn't bundle npm packages)
+- `pages/newsletter.astro` — Public newsletter viewer, fetches from GitHub API with sessionStorage cache
+- `pages/guide.astro` + `pages/guide/gemini-api.astro` + `pages/guide/email-providers.astro` — Setup documentation
+
+Build commands:
+```bash
+cd web && npm run build    # Build → web/dist/
+cd web && npm run dev      # Dev server
+```
+
+Deployment: `.github/workflows/deploy-web.yml` triggers on push to `main` with changes in `web/`.
+
 ## Pre-push checklist
 
 Before pushing, always run all three checks and fix any issues:

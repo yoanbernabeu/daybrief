@@ -1,0 +1,176 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="Setup Guide — DayBrief" description="Step-by-step guide to set up your DayBrief AI newsletter.">
+  <div class="max-w-3xl mx-auto px-6 py-16 md:py-24">
+
+    <div class="mb-12">
+      <a href={base} class="text-sm text-db-blue hover:underline mb-4 inline-block">&larr; Back to home</a>
+      <h1 class="text-4xl font-extrabold text-db-text tracking-tight mb-4">Setup Guide</h1>
+      <p class="text-db-text-secondary text-lg">Everything you need to get your AI newsletter running in minutes.</p>
+    </div>
+
+    <!-- Step 1 -->
+    <section class="mb-14">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="w-8 h-8 rounded-lg bg-db-blue text-white text-sm font-bold flex items-center justify-center">1</span>
+        <h2 class="text-xl font-extrabold text-db-text">Create your repository</h2>
+      </div>
+      <div class="pl-11 space-y-4 text-db-text-secondary leading-relaxed">
+        <p>Create a new GitHub repository (public or private) that will host your DayBrief configuration and newsletter output.</p>
+      </div>
+    </section>
+
+    <!-- Step 2 -->
+    <section class="mb-14">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="w-8 h-8 rounded-lg bg-db-blue text-white text-sm font-bold flex items-center justify-center">2</span>
+        <h2 class="text-xl font-extrabold text-db-text">Create config.yaml</h2>
+      </div>
+      <div class="pl-11 space-y-4 text-db-text-secondary leading-relaxed">
+        <p>Add a <code class="bg-db-card px-1.5 py-0.5 rounded border border-db-border text-sm text-db-text">config.yaml</code> at the root of your repository:</p>
+        <pre class="bg-db-surface border border-db-border text-db-text-secondary rounded-xl p-5 text-sm overflow-x-auto leading-relaxed"><code>gemini:
+  model: "gemini-3-flash-preview"
+
+newsletter:
+  language: "en"
+  max_highlights: 5
+  default_lookback: "48h"
+
+mail:
+  subject_prefix: "[DayBrief]"
+
+sources:
+  rss:
+    - url: "https://example.com/feed.xml"
+      name: "Example Blog"
+  youtube:
+    - channel_id: "UCxxxxxxxx"
+      name: "My Channel"
+  podcasts:
+    - url: "https://example.com/podcast.xml"
+      name: "My Podcast"</code></pre>
+        <p>You can also use the <a href={`${base}/admin/`} class="text-db-blue hover:underline">web dashboard</a> to edit this file visually.</p>
+      </div>
+    </section>
+
+    <!-- Step 3 -->
+    <section class="mb-14">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="w-8 h-8 rounded-lg bg-db-blue text-white text-sm font-bold flex items-center justify-center">3</span>
+        <h2 class="text-xl font-extrabold text-db-text">Set up GitHub Secrets</h2>
+      </div>
+      <div class="pl-11 space-y-4 text-db-text-secondary leading-relaxed">
+        <p>Go to your repository's <strong class="text-db-text">Settings &rarr; Secrets and variables &rarr; Actions</strong> and add:</p>
+        <div class="bg-db-card rounded-xl border border-db-border overflow-hidden">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-db-border"><th class="text-left px-4 py-3 font-semibold text-db-text">Secret</th><th class="text-left px-4 py-3 font-semibold text-db-text">Description</th><th class="text-left px-4 py-3 font-semibold text-db-text">Required</th></tr></thead>
+            <tbody class="text-db-text-secondary">
+              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">GEMINI_API_KEY</code></td><td class="px-4 py-2.5">Google Gemini API key</td><td class="px-4 py-2.5">Yes</td></tr>
+              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">YOUTUBE_API_KEY</code></td><td class="px-4 py-2.5">YouTube Data API key</td><td class="px-4 py-2.5">If YouTube</td></tr>
+              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">SMTP_HOST</code></td><td class="px-4 py-2.5">SMTP server hostname</td><td class="px-4 py-2.5">Yes</td></tr>
+              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">SMTP_PORT</code></td><td class="px-4 py-2.5">SMTP port (default: 587)</td><td class="px-4 py-2.5">Yes</td></tr>
+              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">SMTP_USERNAME</code></td><td class="px-4 py-2.5">SMTP username</td><td class="px-4 py-2.5">Yes</td></tr>
+              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">SMTP_PASSWORD</code></td><td class="px-4 py-2.5">SMTP password</td><td class="px-4 py-2.5">Yes</td></tr>
+              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">MAIL_FROM_EMAIL</code></td><td class="px-4 py-2.5">Sender email</td><td class="px-4 py-2.5">Yes</td></tr>
+              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">MAIL_FROM_NAME</code></td><td class="px-4 py-2.5">Sender name (default: DayBrief)</td><td class="px-4 py-2.5">No</td></tr>
+              <tr><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">DAYBRIEF_RECIPIENTS</code></td><td class="px-4 py-2.5">Comma-separated recipients</td><td class="px-4 py-2.5">Yes</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 mt-4">
+          <a href={`${base}/guide/gemini-api/`} class="inline-flex items-center gap-2 text-sm font-semibold text-db-blue hover:underline">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            How to get a Gemini API key
+          </a>
+          <a href={`${base}/guide/email-providers/`} class="inline-flex items-center gap-2 text-sm font-semibold text-db-blue hover:underline">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Free email providers (SMTP)
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 4 -->
+    <section class="mb-14">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="w-8 h-8 rounded-lg bg-db-blue text-white text-sm font-bold flex items-center justify-center">4</span>
+        <h2 class="text-xl font-extrabold text-db-text">Add the GitHub Action workflow</h2>
+      </div>
+      <div class="pl-11 space-y-4 text-db-text-secondary leading-relaxed">
+        <p>Create <code class="bg-db-card px-1.5 py-0.5 rounded border border-db-border text-sm text-db-text">.github/workflows/daybrief.yml</code>:</p>
+        <pre class="bg-db-surface border border-db-border text-db-text-secondary rounded-xl p-5 text-sm overflow-x-auto leading-relaxed"><code>name: DayBrief Newsletter
+on:
+  schedule:
+    - cron: '0 7 * * 1-5'  # Weekdays at 7am UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  newsletter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: yoanbernabeu/daybrief@v0.1.0
+        with:
+          gemini_api_key: $&#123;&#123; secrets.GEMINI_API_KEY &#125;&#125;
+          youtube_api_key: $&#123;&#123; secrets.YOUTUBE_API_KEY &#125;&#125;
+          smtp_host: $&#123;&#123; secrets.SMTP_HOST &#125;&#125;
+          smtp_port: $&#123;&#123; secrets.SMTP_PORT &#125;&#125;
+          smtp_username: $&#123;&#123; secrets.SMTP_USERNAME &#125;&#125;
+          smtp_password: $&#123;&#123; secrets.SMTP_PASSWORD &#125;&#125;
+          mail_from_name: $&#123;&#123; secrets.MAIL_FROM_NAME &#125;&#125;
+          mail_from_email: $&#123;&#123; secrets.MAIL_FROM_EMAIL &#125;&#125;
+          recipients: $&#123;&#123; secrets.DAYBRIEF_RECIPIENTS &#125;&#125;</code></pre>
+      </div>
+    </section>
+
+    <!-- Step 5 -->
+    <section class="mb-14">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="w-8 h-8 rounded-lg bg-db-blue text-white text-sm font-bold flex items-center justify-center">5</span>
+        <h2 class="text-xl font-extrabold text-db-text">Run & receive</h2>
+      </div>
+      <div class="pl-11 space-y-4 text-db-text-secondary leading-relaxed">
+        <p>On each scheduled run, DayBrief will:</p>
+        <ol class="list-decimal list-inside space-y-2 pl-1">
+          <li>Fetch new content published since the last run</li>
+          <li>Send each item to Gemini AI for individual summarization</li>
+          <li>Synthesize all summaries into a newsletter with editorial, highlights, and resources</li>
+          <li>Save the newsletter as JSON in <code class="bg-db-card px-1.5 py-0.5 rounded border border-db-border text-sm text-db-text">output/</code></li>
+          <li>Render HTML and send via SMTP</li>
+        </ol>
+        <p>Trigger manually from the <strong class="text-db-text">Actions</strong> tab to test.</p>
+      </div>
+    </section>
+
+    <!-- Step 6 -->
+    <section class="mb-14">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="w-8 h-8 rounded-lg bg-db-blue text-white text-sm font-bold flex items-center justify-center">6</span>
+        <h2 class="text-xl font-extrabold text-db-text">Share your newsletter</h2>
+      </div>
+      <div class="pl-11 space-y-4 text-db-text-secondary leading-relaxed">
+        <p>Anyone can view your newsletter archive via a public URL:</p>
+        <div class="bg-db-card rounded-xl border border-db-border px-5 py-3 font-mono text-sm text-db-text">
+          yoanbernabeu.github.io/daybrief/<strong>owner</strong>/<strong>repo</strong>
+        </div>
+        <p>Works for any public repository with JSON files in <code class="bg-db-card px-1.5 py-0.5 rounded border border-db-border text-sm text-db-text">output/</code>.</p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="bg-db-card rounded-2xl border border-db-border p-8 text-center">
+      <h3 class="text-xl font-extrabold text-db-text mb-3">Ready to start?</h3>
+      <p class="text-db-text-secondary text-sm mb-6">Manage your configuration visually from the dashboard.</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <a href={`${base}/admin/`} class="inline-flex items-center gap-2 bg-db-blue px-6 py-2.5 rounded-xl font-semibold text-sm text-white transition-all hover:bg-db-blue-hover">Open Dashboard</a>
+        <a href="https://github.com/yoanbernabeu/daybrief" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 border border-db-border px-6 py-2.5 rounded-xl font-semibold text-sm text-db-text transition-all hover:bg-white/5">View on GitHub</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

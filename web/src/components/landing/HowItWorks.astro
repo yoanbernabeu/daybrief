@@ -1,0 +1,65 @@
+---
+const base = import.meta.env.BASE_URL;
+
+const steps = [
+  {
+    number: '01',
+    title: 'Configure your sources',
+    description: 'Define RSS feeds, YouTube channels, and podcasts in a simple YAML file. Set language, AI model, and frequency.',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>`,
+  },
+  {
+    number: '02',
+    title: 'Add a GitHub Action',
+    description: 'Copy the workflow YAML into your repo. Set API keys and SMTP credentials as GitHub Secrets. Choose your cron schedule.',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>`,
+  },
+  {
+    number: '03',
+    title: 'AI summarizes & synthesizes',
+    description: 'On each run, DayBrief fetches new content, sends it to Gemini AI for analysis, then generates a full editorial newsletter.',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>`,
+  },
+  {
+    number: '04',
+    title: 'Receive & share',
+    description: 'Get your newsletter by email. Every edition is archived as JSON. Share a public web page with your audience.',
+    icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>`,
+  },
+];
+---
+
+<section class="border-t border-db-border py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="text-center mb-14">
+      <p class="text-db-blue text-sm font-semibold mb-3">How it works</p>
+      <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">
+        Up and running in minutes
+      </h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {steps.map((step) => (
+        <div class="group relative bg-db-card border border-db-border rounded-2xl p-6 hover:border-db-blue/30 transition-colors">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-db-blue/10 flex items-center justify-center text-db-blue">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <Fragment set:html={step.icon} />
+              </svg>
+            </div>
+            <span class="text-xs font-bold text-db-text-muted tracking-wider">{step.number}</span>
+          </div>
+          <h3 class="text-[15px] font-bold text-db-text mb-2">{step.title}</h3>
+          <p class="text-sm text-db-text-secondary leading-relaxed">{step.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="text-center mt-10">
+      <a href={`${base}/guide/`} class="inline-flex items-center gap-2 text-sm font-semibold text-db-blue hover:text-blue-400 transition-colors">
+        Read the full setup guide
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
+    </div>
+  </div>
+</section>

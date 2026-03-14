@@ -81,6 +81,9 @@ on:
   schedule:
     - cron: "0 7 * * 1" # Every Monday at 7:00 UTC
 
+permissions:
+  contents: write
+
 jobs:
   newsletter:
     runs-on: ubuntu-latest
@@ -109,6 +112,22 @@ Adjust the cron schedule to your needs. The workflow can also be triggered manua
 Go to the **Actions** tab in your repository, select "DayBrief Newsletter", and click **Run workflow** to test it. Once confirmed, the cron schedule will take care of the rest.
 
 The action automatically commits newsletter output files to `output/` in your repository, which are used to track what content has already been processed (incremental updates).
+
+## Web App
+
+DayBrief includes a static web app (in `web/`) built with Astro 6, deployed on GitHub Pages:
+
+- **Landing page** — Project presentation at [yoanbernabeu.github.io/daybrief](https://yoanbernabeu.github.io/daybrief)
+- **Dashboard** — Web UI to edit `config.yaml` visually, manage sources, preview newsletters, and get your shareable URL
+- **Public newsletter page** — Shareable page to browse newsletter archives (e.g. `yoanbernabeu.github.io/daybrief/owner/repo`)
+- **Setup guide** — Step-by-step documentation with Gemini API setup and free email provider recommendations
+
+```bash
+cd web
+npm install
+npm run dev      # Dev server
+npm run build    # Production build → web/dist/
+```
 
 ## CLI Usage
 

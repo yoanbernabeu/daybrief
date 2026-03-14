@@ -1,0 +1,114 @@
+---
+const base = import.meta.env.BASE_URL;
+---
+
+<section class="border-t border-db-border py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+      <!-- Left: Text -->
+      <div>
+        <p class="text-db-blue text-sm font-semibold mb-3">Web Dashboard</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-5">
+          Manage your newsletter<br/>from the browser
+        </h2>
+        <p class="text-db-text-secondary leading-relaxed mb-8">
+          No need to edit YAML by hand. The dashboard connects to your GitHub repo with a Personal Access Token and lets you manage everything visually.
+        </p>
+
+        <ul class="space-y-4 mb-8">
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-md bg-db-blue/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg class="w-3.5 h-3.5 text-db-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-db-text">Edit config.yaml visually</p>
+              <p class="text-sm text-db-text-secondary">Change AI model, language, lookback window, editorial prompt — all from a form.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-md bg-db-blue/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg class="w-3.5 h-3.5 text-db-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-db-text">Add & remove sources</p>
+              <p class="text-sm text-db-text-secondary">Manage your RSS feeds, YouTube channels, and podcasts with add/remove buttons.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-md bg-db-blue/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg class="w-3.5 h-3.5 text-db-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-db-text">Save directly to GitHub</p>
+              <p class="text-sm text-db-text-secondary">One click commits the updated config.yaml to your repository's main branch.</p>
+            </div>
+          </li>
+        </ul>
+
+        <a
+          href={`${base}/admin/`}
+          class="inline-flex items-center gap-2 bg-db-blue text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-db-blue-hover hover:shadow-[0_0_24px_rgba(59,130,246,0.25)]"
+        >
+          Open Dashboard
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      </div>
+
+      <!-- Right: Config diff visual -->
+      <div class="relative select-none" aria-hidden="true">
+        <div class="bg-db-surface border border-db-border rounded-2xl overflow-hidden shadow-2xl shadow-black/30">
+          <!-- File header -->
+          <div class="flex items-center justify-between px-4 py-2.5 border-b border-db-border bg-db-card">
+            <div class="flex items-center gap-2">
+              <svg class="w-3.5 h-3.5 text-db-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <span class="text-xs font-medium text-db-text-secondary">config.yaml</span>
+            </div>
+            <span class="text-[10px] text-green-400 font-medium">saved via dashboard</span>
+          </div>
+
+          <!-- Code block -->
+          <div class="p-0 font-mono text-[11px] md:text-xs leading-[1.8]">
+            <!-- Normal lines -->
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">1</span><span class="text-db-blue">gemini</span><span class="text-db-text-muted">:</span></div>
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">2</span>  <span class="text-db-text-secondary">model</span>: <span class="text-green-400">"gemini-3-flash-preview"</span></div>
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">3</span></div>
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">4</span><span class="text-db-blue">newsletter</span><span class="text-db-text-muted">:</span></div>
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">5</span>  <span class="text-db-text-secondary">language</span>: <span class="text-green-400">"fr"</span></div>
+
+            <!-- Diff: removed line -->
+            <div class="px-4 py-0.5 bg-red-500/[0.07] text-red-400/80 border-l-2 border-red-500/40"><span class="text-red-400/40 mr-3 inline-block w-4 text-right">6</span>  <span>max_highlights</span>: <span>3</span></div>
+            <!-- Diff: added line -->
+            <div class="px-4 py-0.5 bg-green-500/[0.07] text-green-400/90 border-l-2 border-green-500/40"><span class="text-green-400/40 mr-3 inline-block w-4 text-right">6</span>  <span>max_highlights</span>: <span>5</span></div>
+
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">7</span>  <span class="text-db-text-secondary">default_lookback</span>: <span class="text-green-400">"48h"</span></div>
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">8</span></div>
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">9</span><span class="text-db-blue">sources</span><span class="text-db-text-muted">:</span></div>
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">10</span>  <span class="text-db-text-secondary">rss</span>:</div>
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">11</span>    - <span class="text-db-text-secondary">url</span>: <span class="text-green-400">"https://blog.example.com/rss"</span></div>
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">12</span>      <span class="text-db-text-secondary">name</span>: <span class="text-green-400">"Tech Blog"</span></div>
+
+            <!-- Diff: new source added -->
+            <div class="px-4 py-0.5 bg-green-500/[0.07] text-green-400/90 border-l-2 border-green-500/40"><span class="text-green-400/40 mr-3 inline-block w-4 text-right">13</span>    - <span>url</span>: <span>"https://news.dev/feed"</span></div>
+            <div class="px-4 py-0.5 bg-green-500/[0.07] text-green-400/90 border-l-2 border-green-500/40"><span class="text-green-400/40 mr-3 inline-block w-4 text-right">14</span>      <span>name</span>: <span>"Dev News"</span></div>
+
+            <div class="px-4 py-0.5 text-db-text-muted"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">15</span>  <span class="text-db-text-secondary">youtube</span>:</div>
+            <div class="px-4 py-0.5 text-db-text-muted pb-2"><span class="text-db-text-muted/50 mr-3 inline-block w-4 text-right">16</span>    - <span class="text-db-text-secondary">channel_id</span>: <span class="text-green-400">"UC..."</span></div>
+          </div>
+
+          <!-- Commit footer -->
+          <div class="flex items-center gap-2 px-4 py-2.5 border-t border-db-border bg-db-card">
+            <div class="w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
+              <svg class="w-2.5 h-2.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <span class="text-[10px] text-db-text-muted">Update config.yaml via DayBrief Dashboard</span>
+          </div>
+        </div>
+
+        <!-- Decorative glow -->
+        <div class="absolute -inset-4 -z-10 rounded-3xl bg-db-blue/[0.04] blur-2xl"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
