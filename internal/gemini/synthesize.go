@@ -96,7 +96,7 @@ Produce your output in %s.`, string(summariesJSON), c.editorialPrompt, c.maxHigh
 	newsletter, err := withRetry(func() (*Newsletter, error) {
 		resp, err := c.client.Models.GenerateContent(ctx, c.model, contents, config)
 		if err != nil {
-			return nil, fmt.Errorf("Gemini API call: %w", err)
+			return nil, fmt.Errorf("gemini API call: %w", err)
 		}
 
 		if len(resp.Candidates) == 0 || resp.Candidates[0].Content == nil || len(resp.Candidates[0].Content.Parts) == 0 {

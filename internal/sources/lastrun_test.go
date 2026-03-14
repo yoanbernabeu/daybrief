@@ -31,8 +31,12 @@ func TestGetLastExecutionDate(t *testing.T) {
 func TestGetLastExecutionDateMultipleFiles(t *testing.T) {
 	dir := t.TempDir()
 
-	os.WriteFile(filepath.Join(dir, "2026-03-08.json"), []byte(`{"generated_at": "2026-03-08T08:00:00Z"}`), 0644)
-	os.WriteFile(filepath.Join(dir, "2026-03-10.json"), []byte(`{"generated_at": "2026-03-10T10:00:00Z"}`), 0644)
+	if err := os.WriteFile(filepath.Join(dir, "2026-03-08.json"), []byte(`{"generated_at": "2026-03-08T08:00:00Z"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "2026-03-10.json"), []byte(`{"generated_at": "2026-03-10T10:00:00Z"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
 
 	got, err := GetLastExecutionDate(dir, testLookback)
 	if err != nil {

@@ -17,7 +17,7 @@ Thank you for your interest in contributing to DayBrief!
 
 ### Prerequisites
 
-- Go 1.24+
+- Go 1.25+
 - golangci-lint
 
 ### Building

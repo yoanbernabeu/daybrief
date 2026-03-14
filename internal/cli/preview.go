@@ -78,10 +78,10 @@ var previewCmd = &cobra.Command{
 		}
 
 		if _, err := tmpFile.WriteString(html); err != nil {
-			tmpFile.Close()
+			_ = tmpFile.Close()
 			return fmt.Errorf("writing temp file: %w", err)
 		}
-		tmpFile.Close()
+		_ = tmpFile.Close()
 
 		logger.Info("preview file created", "path", tmpFile.Name())
 
