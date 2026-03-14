@@ -93,7 +93,38 @@ daybrief sources --config config.yaml
 
 ## GitHub Actions
 
-Copy `.github/workflows/daybrief-example.yml` to your repository and configure the required secrets in your GitHub repository settings.
+DayBrief is available as a GitHub Action. Add a workflow to your repository:
+
+```yaml
+name: DayBrief Newsletter
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * 1" # Every Monday at 7:00 UTC
+
+jobs:
+  newsletter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: yoanbernabeu/daybrief@v1
+        with:
+          config: config.yaml
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
+          MAIL_FROM_EMAIL: ${{ secrets.MAIL_FROM_EMAIL }}
+          DAYBRIEF_RECIPIENTS: ${{ secrets.DAYBRIEF_RECIPIENTS }}
+```
+
+Configure the required secrets in your repository settings under **Settings > Secrets and variables > Actions**.
 
 ## License
 

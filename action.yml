@@ -1,0 +1,39 @@
+name: "DayBrief"
+description: "Aggregate RSS, YouTube & podcast content, summarize with Gemini AI, and send an automated HTML newsletter."
+
+branding:
+  icon: "mail"
+  color: "blue"
+
+inputs:
+  config:
+    description: "Path to config.yaml"
+    required: true
+  commit-output:
+    description: "Commit the newsletter JSON output to the repo"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download DayBrief
+      shell: bash
+      run: |
+        LATEST=$(curl -s https://api.github.com/repos/yoanbernabeu/daybrief/releases/latest | grep browser_download_url | grep linux-amd64 | cut -d '"' -f 4)
+        curl -sL "$LATEST" -o "${{ github.action_path }}/daybrief"
+        chmod +x "${{ github.action_path }}/daybrief"
+
+    - name: Run DayBrief
+      shell: bash
+      run: "${{ github.action_path }}/daybrief run --config ${{ inputs.config }}"
+
+    - name: Commit output
+      if: inputs.commit-output == 'true'
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add output/
+        git diff --staged --quiet || git commit -m "chore: add newsletter $(date +%Y-%m-%d)"
+        git push
