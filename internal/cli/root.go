@@ -19,7 +19,7 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "daybrief",
 	Short: "DayBrief - Automated newsletter from RSS, YouTube, and podcasts",
-	Long:  "DayBrief aggregates content from multiple sources, uses Gemini AI to summarize and synthesize, and sends an automated HTML newsletter.",
+	Long:  "DayBrief aggregates content from multiple sources, uses Gemini or OpenAI to summarize and synthesize, and sends an automated HTML newsletter.",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		// Setup logger
 		level := slog.LevelInfo
@@ -38,6 +38,10 @@ var rootCmd = &cobra.Command{
 		// Load env
 		envCfg, err = config.LoadEnv()
 		if err != nil {
+			return err
+		}
+
+		if err := config.ValidateAIProviderEnv(cfg, envCfg); err != nil {
 			return err
 		}
 

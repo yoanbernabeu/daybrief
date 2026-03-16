@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/yoanbernabeu/daybrief/internal/ai"
 	"github.com/yoanbernabeu/daybrief/internal/gemini"
 	"github.com/yoanbernabeu/daybrief/internal/mail"
 	"github.com/yoanbernabeu/daybrief/internal/newsletter"
@@ -38,7 +39,7 @@ var runCmd = &cobra.Command{
 		logger.Info("found new content", "count", len(items))
 
 		// 3. Summarize each source
-		client, err := gemini.NewClient(ctx, envCfg.GeminiAPIKey, cfg.Gemini.Model, cfg.Newsletter.Language, cfg.Newsletter.MaxHighlights, cfg.Newsletter.EditorialPrompt, logger)
+		client, err := ai.NewProvider(ctx, cfg, envCfg, logger)
 		if err != nil {
 			return err
 		}

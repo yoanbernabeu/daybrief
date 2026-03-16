@@ -21,7 +21,8 @@ export interface Sources {
   podcasts: PodcastSource[];
 }
 
-export interface GeminiConfig {
+export interface AIConfig {
+  provider: "gemini" | "openai";
   model: string;
 }
 
@@ -37,7 +38,7 @@ export interface MailConfig {
 }
 
 export interface DayBriefConfig {
-  gemini: GeminiConfig;
+  ai: AIConfig;
   newsletter: NewsletterConfig;
   mail: MailConfig;
   sources: Sources;

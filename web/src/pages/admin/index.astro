@@ -108,15 +108,24 @@ const base = import.meta.env.BASE_URL;
               <p class="text-sm text-db-text-secondary mb-6">Configure the AI model, newsletter options, and email settings.</p>
             </div>
 
-            <!-- Gemini -->
+            <!-- AI -->
             <div class="bg-db-card rounded-2xl border border-db-border p-6">
               <h3 class="text-sm font-bold text-db-text mb-4 flex items-center gap-2">
                 <svg class="w-4 h-4 text-db-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-                Gemini AI
+                AI Provider
               </h3>
-              <div>
-                <label for="gemini-model" class="block text-xs font-medium text-db-text-secondary mb-1.5">Model</label>
-                <input type="text" id="gemini-model" class="w-full px-4 py-2.5 rounded-xl bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="ai-provider" class="block text-xs font-medium text-db-text-secondary mb-1.5">Provider</label>
+                  <select id="ai-provider" class="w-full px-4 py-2.5 rounded-xl bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors">
+                    <option value="gemini">Gemini</option>
+                    <option value="openai">OpenAI</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="ai-model" class="block text-xs font-medium text-db-text-secondary mb-1.5">Model</label>
+                  <input type="text" id="ai-model" class="w-full px-4 py-2.5 rounded-xl bg-db-surface border border-db-border text-sm text-db-text focus:outline-none focus:ring-2 focus:ring-db-blue/30 focus:border-db-blue/50 transition-colors" />
+                </div>
               </div>
             </div>
 
@@ -437,7 +446,11 @@ const base = import.meta.env.BASE_URL;
           configSha = file.sha;
           const raw = (jsYaml.load(decodeURIComponent(escape(atob(file.content)))) as any) || {};
 
-          (document.getElementById('gemini-model') as HTMLInputElement).value = raw.gemini?.model || 'gemini-3-flash-preview';
+          const legacyGeminiModel = raw.gemini?.model;
+          const providerRaw = String(raw.ai?.provider || (legacyGeminiModel ? 'gemini' : 'gemini')).toLowerCase();
+          const provider = providerRaw === 'openai' ? 'openai' : 'gemini';
+          (document.getElementById('ai-provider') as HTMLSelectElement).value = provider;
+          (document.getElementById('ai-model') as HTMLInputElement).value = raw.ai?.model || legacyGeminiModel || 'gemini-3-flash-preview';
           (document.getElementById('nl-language') as HTMLInputElement).value = raw.newsletter?.language || 'en';
           (document.getElementById('nl-max-highlights') as HTMLInputElement).value = raw.newsletter?.max_highlights || 5;
           (document.getElementById('nl-lookback') as HTMLInputElement).value = raw.newsletter?.default_lookback || '48h';
@@ -490,7 +503,10 @@ const base = import.meta.env.BASE_URL;
         statuses.forEach(s => s.classList.add('hidden'));
 
         const config = {
-          gemini: { model: (document.getElementById('gemini-model') as HTMLInputElement).value },
+          ai: {
+            provider: (document.getElementById('ai-provider') as HTMLSelectElement).value,
+            model: (document.getElementById('ai-model') as HTMLInputElement).value,
+          },
           newsletter: {
             language: (document.getElementById('nl-language') as HTMLInputElement).value,
             max_highlights: parseInt((document.getElementById('nl-max-highlights') as HTMLInputElement).value) || 5,
