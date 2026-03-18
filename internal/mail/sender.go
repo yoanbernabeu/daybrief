@@ -34,8 +34,8 @@ func SendEmail(env *config.EnvConfig, subjectPrefix, subject, htmlBody string) e
 	msg.WriteString("\r\n")
 	msg.WriteString(htmlBody)
 
-	auth := smtp.PlainAuth("", env.SMTPUsername, env.SMTPPassword, env.SMTPHost)
 	addr := fmt.Sprintf("%s:%s", env.SMTPHost, env.SMTPPort)
+	auth := buildSMTPAuth(env)
 
 	err := smtp.SendMail(addr, auth, env.MailFromEmail, env.Recipients, []byte(msg.String()))
 	if err != nil {
@@ -43,4 +43,12 @@ func SendEmail(env *config.EnvConfig, subjectPrefix, subject, htmlBody string) e
 	}
 
 	return nil
+}
+
+func buildSMTPAuth(env *config.EnvConfig) smtp.Auth {
+	if env.SMTPUsername == "" && env.SMTPPassword == "" {
+		return nil
+	}
+
+	return smtp.PlainAuth("", env.SMTPUsername, env.SMTPPassword, env.SMTPHost)
 }

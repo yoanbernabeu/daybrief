@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"time"
 
 	"github.com/yoanbernabeu/daybrief/internal/gemini"
@@ -28,4 +29,32 @@ func SaveJSON(newsletter *gemini.Newsletter, outputDir string) (string, error) {
 	}
 
 	return path, nil
+}
+
+func LoadJSON(path string) (*gemini.Newsletter, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("reading newsletter: %w", err)
+	}
+
+	var nl gemini.Newsletter
+	if err := json.Unmarshal(data, &nl); err != nil {
+		return nil, fmt.Errorf("parsing newsletter: %w", err)
+	}
+
+	return &nl, nil
+}
+
+func GetLatestOutputPath(outputDir string) (string, error) {
+	matches, err := filepath.Glob(filepath.Join(outputDir, "*.json"))
+	if err != nil {
+		return "", fmt.Errorf("globbing output dir: %w", err)
+	}
+
+	if len(matches) == 0 {
+		return "", fmt.Errorf("no newsletter outputs found in %s", outputDir)
+	}
+
+	sort.Sort(sort.Reverse(sort.StringSlice(matches)))
+	return matches[0], nil
 }
