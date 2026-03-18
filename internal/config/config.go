@@ -30,15 +30,20 @@ type Sources struct {
 	Podcasts []PodcastSource `yaml:"podcasts"`
 }
 
+type AIConfig struct {
+	Provider string `yaml:"provider"`
+	Model    string `yaml:"model"`
+}
+
 type GeminiConfig struct {
 	Model string `yaml:"model"`
 }
 
 type NewsletterConfig struct {
-	Language         string `yaml:"language"`
-	MaxHighlights    int    `yaml:"max_highlights"`
-	EditorialPrompt  string `yaml:"editorial_prompt"`
-	DefaultLookback  string `yaml:"default_lookback"`
+	Language        string `yaml:"language"`
+	MaxHighlights   int    `yaml:"max_highlights"`
+	EditorialPrompt string `yaml:"editorial_prompt"`
+	DefaultLookback string `yaml:"default_lookback"`
 }
 
 type MailConfig struct {
@@ -46,6 +51,7 @@ type MailConfig struct {
 }
 
 type Config struct {
+	AI         AIConfig         `yaml:"ai"`
 	Gemini     GeminiConfig     `yaml:"gemini"`
 	Newsletter NewsletterConfig `yaml:"newsletter"`
 	Mail       MailConfig       `yaml:"mail"`
@@ -54,6 +60,7 @@ type Config struct {
 
 type EnvConfig struct {
 	GeminiAPIKey  string
+	OpenAIAPIKey  string
 	YouTubeAPIKey string
 	SMTPHost      string
 	SMTPPort      string
@@ -75,9 +82,24 @@ func Load(path string) (*Config, error) {
 		return nil, fmt.Errorf("parsing config file: %w", err)
 	}
 
+	// Backward compatibility for legacy config format.
+	if cfg.AI.Provider == "" && cfg.Gemini.Model != "" {
+		cfg.AI.Provider = "gemini"
+		cfg.AI.Model = cfg.Gemini.Model
+	}
+
 	// Set defaults
-	if cfg.Gemini.Model == "" {
-		cfg.Gemini.Model = "gemini-3-flash-preview"
+	if cfg.AI.Provider == "" {
+		cfg.AI.Provider = "gemini"
+	}
+	cfg.AI.Provider = strings.ToLower(strings.TrimSpace(cfg.AI.Provider))
+	if cfg.AI.Model == "" {
+		switch cfg.AI.Provider {
+		case "openai":
+			cfg.AI.Model = "gpt-4.1-mini"
+		default:
+			cfg.AI.Model = "gemini-3-flash-preview"
+		}
 	}
 	if cfg.Newsletter.MaxHighlights == 0 {
 		cfg.Newsletter.MaxHighlights = 5
@@ -98,6 +120,7 @@ func LoadEnv() (*EnvConfig, error) {
 
 	env := &EnvConfig{
 		GeminiAPIKey:  os.Getenv("GEMINI_API_KEY"),
+		OpenAIAPIKey:  os.Getenv("OPENAI_API_KEY"),
 		YouTubeAPIKey: os.Getenv("YOUTUBE_API_KEY"),
 		SMTPHost:      os.Getenv("SMTP_HOST"),
 		SMTPPort:      os.Getenv("SMTP_PORT"),
@@ -125,4 +148,21 @@ func LoadEnv() (*EnvConfig, error) {
 	}
 
 	return env, nil
+}
+
+func ValidateAIProviderEnv(cfg *Config, env *EnvConfig) error {
+	switch cfg.AI.Provider {
+	case "gemini":
+		if strings.TrimSpace(env.GeminiAPIKey) == "" {
+			return fmt.Errorf("GEMINI_API_KEY is required when ai.provider=gemini")
+		}
+	case "openai":
+		if strings.TrimSpace(env.OpenAIAPIKey) == "" {
+			return fmt.Errorf("OPENAI_API_KEY is required when ai.provider=openai")
+		}
+	default:
+		return fmt.Errorf("unsupported ai.provider: %s", cfg.AI.Provider)
+	}
+
+	return nil
 }

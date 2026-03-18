@@ -1,5 +1,5 @@
 name: "DayBrief"
-description: "Aggregate RSS, YouTube & podcast content, summarize with Gemini AI, and send an automated HTML newsletter."
+description: "Aggregate RSS, YouTube & podcast content, summarize with Gemini or OpenAI, and send an automated HTML newsletter."
 
 branding:
   icon: "mail"

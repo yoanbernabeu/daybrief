@@ -31,7 +31,8 @@ const base = import.meta.env.BASE_URL;
       </div>
       <div class="pl-11 space-y-4 text-db-text-secondary leading-relaxed">
         <p>Add a <code class="bg-db-card px-1.5 py-0.5 rounded border border-db-border text-sm text-db-text">config.yaml</code> at the root of your repository:</p>
-        <pre class="bg-db-surface border border-db-border text-db-text-secondary rounded-xl p-5 text-sm overflow-x-auto leading-relaxed"><code>gemini:
+        <pre class="bg-db-surface border border-db-border text-db-text-secondary rounded-xl p-5 text-sm overflow-x-auto leading-relaxed"><code>ai:
+  provider: "gemini"
   model: "gemini-3-flash-preview"
 
 newsletter:
@@ -71,7 +72,8 @@ sources:
           <table class="w-full text-sm">
             <thead><tr class="border-b border-db-border"><th class="text-left px-4 py-3 font-semibold text-db-text">Secret</th><th class="text-left px-4 py-3 font-semibold text-db-text">Description</th><th class="text-left px-4 py-3 font-semibold text-db-text">Required</th></tr></thead>
             <tbody class="text-db-text-secondary">
-              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">GEMINI_API_KEY</code></td><td class="px-4 py-2.5">Google Gemini API key</td><td class="px-4 py-2.5">Yes</td></tr>
+              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">GEMINI_API_KEY</code></td><td class="px-4 py-2.5">Google Gemini API key</td><td class="px-4 py-2.5">If provider is Gemini</td></tr>
+              <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">OPENAI_API_KEY</code></td><td class="px-4 py-2.5">OpenAI API key</td><td class="px-4 py-2.5">If provider is OpenAI</td></tr>
               <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">YOUTUBE_API_KEY</code></td><td class="px-4 py-2.5">YouTube Data API key</td><td class="px-4 py-2.5">If YouTube</td></tr>
               <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">SMTP_HOST</code></td><td class="px-4 py-2.5">SMTP server hostname</td><td class="px-4 py-2.5">Yes</td></tr>
               <tr class="border-b border-db-border"><td class="px-4 py-2.5"><code class="text-xs bg-db-surface px-1.5 py-0.5 rounded text-db-text">SMTP_PORT</code></td><td class="px-4 py-2.5">SMTP port (default: 587)</td><td class="px-4 py-2.5">Yes</td></tr>
@@ -88,6 +90,10 @@ sources:
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             How to get a Gemini API key
           </a>
+          <a href={`${base}/guide/openai-api/`} class="inline-flex items-center gap-2 text-sm font-semibold text-db-blue hover:underline">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            How to get an OpenAI API key
+          </a>
           <a href={`${base}/guide/email-providers/`} class="inline-flex items-center gap-2 text-sm font-semibold text-db-blue hover:underline">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             Free email providers (SMTP)
@@ -100,35 +106,40 @@ sources:
     <section class="mb-14">
       <div class="flex items-center gap-3 mb-5">
         <span class="w-8 h-8 rounded-lg bg-db-blue text-white text-sm font-bold flex items-center justify-center">4</span>
-        <h2 class="text-xl font-extrabold text-db-text">Add the GitHub Action workflow</h2>
+          <h2 class="text-xl font-extrabold text-db-text">Add the workflow</h2>
       </div>
       <div class="pl-11 space-y-4 text-db-text-secondary leading-relaxed">
         <p>Create <code class="bg-db-card px-1.5 py-0.5 rounded border border-db-border text-sm text-db-text">.github/workflows/daybrief.yml</code>:</p>
-        <pre class="bg-db-surface border border-db-border text-db-text-secondary rounded-xl p-5 text-sm overflow-x-auto leading-relaxed"><code>name: DayBrief Newsletter
-on:
-  schedule:
-    - cron: '0 7 * * 1-5'  # Weekdays at 7am UTC
-  workflow_dispatch:
+          <pre class="bg-db-surface border border-db-border text-db-text-secondary rounded-xl p-5 text-sm overflow-x-auto leading-relaxed"><code>name: DayBrief Newsletter
 
-permissions:
-  contents: write
+  on:
+    workflow_dispatch:
+    schedule:
+      - cron: "0 7 * * 1" # Every Monday at 7:00 UTC
 
-jobs:
-  newsletter:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: yoanbernabeu/daybrief@v0.1.0
-        with:
-          gemini_api_key: $&#123;&#123; secrets.GEMINI_API_KEY &#125;&#125;
-          youtube_api_key: $&#123;&#123; secrets.YOUTUBE_API_KEY &#125;&#125;
-          smtp_host: $&#123;&#123; secrets.SMTP_HOST &#125;&#125;
-          smtp_port: $&#123;&#123; secrets.SMTP_PORT &#125;&#125;
-          smtp_username: $&#123;&#123; secrets.SMTP_USERNAME &#125;&#125;
-          smtp_password: $&#123;&#123; secrets.SMTP_PASSWORD &#125;&#125;
-          mail_from_name: $&#123;&#123; secrets.MAIL_FROM_NAME &#125;&#125;
-          mail_from_email: $&#123;&#123; secrets.MAIL_FROM_EMAIL &#125;&#125;
-          recipients: $&#123;&#123; secrets.DAYBRIEF_RECIPIENTS &#125;&#125;</code></pre>
+  permissions:
+    contents: write
+
+  jobs:
+    newsletter:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+
+        - uses: yoanbernabeu/daybrief@v0.2.0
+          with:
+            config: config.yaml
+          env:
+            GEMINI_API_KEY: $&#123;&#123; secrets.GEMINI_API_KEY &#125;&#125;
+            OPENAI_API_KEY: $&#123;&#123; secrets.OPENAI_API_KEY &#125;&#125;
+            YOUTUBE_API_KEY: $&#123;&#123; secrets.YOUTUBE_API_KEY &#125;&#125;
+            SMTP_HOST: $&#123;&#123; secrets.SMTP_HOST &#125;&#125;
+            SMTP_PORT: $&#123;&#123; secrets.SMTP_PORT &#125;&#125;
+            SMTP_USERNAME: $&#123;&#123; secrets.SMTP_USERNAME &#125;&#125;
+            SMTP_PASSWORD: $&#123;&#123; secrets.SMTP_PASSWORD &#125;&#125;
+            MAIL_FROM_NAME: $&#123;&#123; secrets.MAIL_FROM_NAME &#125;&#125;
+            MAIL_FROM_EMAIL: $&#123;&#123; secrets.MAIL_FROM_EMAIL &#125;&#125;
+            DAYBRIEF_RECIPIENTS: $&#123;&#123; secrets.DAYBRIEF_RECIPIENTS &#125;&#125;</code></pre>
       </div>
     </section>
 
@@ -142,7 +153,7 @@ jobs:
         <p>On each scheduled run, DayBrief will:</p>
         <ol class="list-decimal list-inside space-y-2 pl-1">
           <li>Fetch new content published since the last run</li>
-          <li>Send each item to Gemini AI for individual summarization</li>
+          <li>Send each item to the configured AI provider for individual summarization</li>
           <li>Synthesize all summaries into a newsletter with editorial, highlights, and resources</li>
           <li>Save the newsletter as JSON in <code class="bg-db-card px-1.5 py-0.5 rounded border border-db-border text-sm text-db-text">output/</code></li>
           <li>Render HTML and send via SMTP</li>

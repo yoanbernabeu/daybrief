@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>AI-powered newsletter from your favorite sources.</strong><br/>
-  Aggregate RSS, YouTube & Podcasts — summarize with Gemini — deliver by email.
+  Aggregate RSS, YouTube & Podcasts — summarize with Gemini or OpenAI — deliver by email.
 </p>
 
 <p align="center">
@@ -32,14 +32,14 @@ DayBrief is an open-source GitHub Action that monitors your content sources over
 **How it works:**
 
 1. **Fetch** — Collects new content from RSS feeds, YouTube channels, and podcasts
-2. **Summarize** — Sends each item to Gemini AI for individual analysis
+2. **Summarize** — Sends each item to the configured AI provider for individual analysis
 3. **Synthesize** — Generates a cohesive newsletter with editorial, highlights, and resources
 4. **Deliver** — Sends the newsletter by email via SMTP and archives it as JSON
 
 ## Features
 
 - **Multi-source aggregation** — RSS feeds, YouTube channels, podcasts
-- **Two-pass AI analysis** — Individual source summaries, then editorial synthesis via Gemini
+- **Two-pass AI analysis** — Individual source summaries, then editorial synthesis via Gemini or OpenAI
 - **Incremental processing** — Only processes content published since the last run
 - **Zero infrastructure** — Runs entirely on GitHub Actions, no server needed
 - **Web dashboard** — Edit config, manage sources, preview newsletters from the browser
@@ -54,7 +54,8 @@ Create a new GitHub repository for your newsletter.
 ### 2. Add `config.yaml`
 
 ```yaml
-gemini:
+ai:
+  provider: "gemini"
   model: "gemini-3-flash-preview"
 
 newsletter:
@@ -83,7 +84,8 @@ sources:
 
 | Option | Default | Description |
 |---|---|---|
-| `gemini.model` | `gemini-3-flash-preview` | Gemini model to use |
+| `ai.provider` | `gemini` | AI provider (`gemini` or `openai`) |
+| `ai.model` | `gemini-3-flash-preview` | Model name for the selected provider |
 | `newsletter.language` | `en` | Newsletter language |
 | `newsletter.max_highlights` | `5` | Number of highlights |
 | `newsletter.default_lookback` | `48h` | Time window for first run |
@@ -98,7 +100,8 @@ Go to **Settings > Secrets and variables > Actions** and add:
 
 | Secret | Required | Description |
 |---|---|---|
-| `GEMINI_API_KEY` | Yes | [Google Gemini API key](https://ai.google.dev/) |
+| `GEMINI_API_KEY` | If `ai.provider=gemini` | [Google Gemini API key](https://ai.google.dev/) |
+| `OPENAI_API_KEY` | If `ai.provider=openai` | [OpenAI API key](https://platform.openai.com/) |
 | `YOUTUBE_API_KEY` | If YouTube | [YouTube Data API key](https://console.cloud.google.com/) |
 | `SMTP_HOST` | Yes | SMTP server host |
 | `SMTP_PORT` | No | SMTP port (default: `587`) |
@@ -108,7 +111,7 @@ Go to **Settings > Secrets and variables > Actions** and add:
 | `MAIL_FROM_EMAIL` | Yes | Sender email address |
 | `DAYBRIEF_RECIPIENTS` | Yes | Comma-separated recipient emails |
 
-> Need help? See [how to get a Gemini API key](https://yoanbernabeu.github.io/daybrief/guide/gemini-api/) and [free email providers](https://yoanbernabeu.github.io/daybrief/guide/email-providers/).
+> Need help? See [how to get a Gemini API key](https://yoanbernabeu.github.io/daybrief/guide/gemini-api/), [how to get an OpenAI API key](https://yoanbernabeu.github.io/daybrief/guide/openai-api/), and [free email providers](https://yoanbernabeu.github.io/daybrief/guide/email-providers/).
 
 ### 4. Add the workflow
 
@@ -136,6 +139,7 @@ jobs:
           config: config.yaml
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
@@ -198,8 +202,8 @@ RSS / YouTube / Podcasts
         │
         ▼
    ┌─────────┐     ┌───────────┐     ┌──────────┐     ┌───────┐
-   │  Fetch   │────▶│ Summarize │────▶│Synthesize│────▶│ Email │
-   │ sources  │     │ (Gemini)  │     │(Gemini)  │     │ SMTP  │
+  │  Fetch   │────▶│ Summarize │────▶│Synthesize│────▶│ Email │
+  │ sources  │     │(Gem/OpenAI)│    │(Gem/OpenAI)│   │ SMTP  │
    └─────────┘     └───────────┘     └──────────┘     └───────┘
                                            │
                                            ▼
